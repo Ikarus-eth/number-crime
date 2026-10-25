@@ -1,6 +1,6 @@
 # Küchen-Chaos
 
-A real-time cooperative kitchen game for 2–4 players, one iPad each, played in the browser. It follows all eight scenarios and the five Master Chef missions of the Kitchen Rush revised rules, with its own dishes and artwork.
+A real-time cooperative kitchen game for 1–4 players, one iPad each, played in the browser. It follows all eight scenarios and the five Master Chef missions of the Kitchen Rush revised rules, with its own dishes and artwork.
 
 ## Restaurants
 
@@ -18,6 +18,10 @@ Master chef missions (rules of restaurant 8): Equality, Striking workers, Kitche
 Not in the rulebook text, so made up for this version: dish recipes and prices, the award cards (thresholds 4/8/12 reputation for three chefs), office card costs, two sink spaces, and the order in which unpaid timers strike (temps first, then each chef's second timer). The 24 event cards are not included.
 
 Goals scale with the number of players, as in the board game.
+
+## Solo campaign
+
+"Solo campaign" on the start screen plays alone on one iPad, without any connection to other iPads. Win a restaurant to open the next one; the master chef missions open after restaurant 8. After a lost round you can try again or continue anyway. Progress is saved on the iPad per player name. The rulebook has no one-player goals, so the solo goals are our own, scaled down from the two-player goals. If every sand timer is on strike, the game ends at once, because nobody could pay a timer back.
 
 ## Publish
 

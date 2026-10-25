@@ -564,6 +564,26 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
 .matecard { border-top: 8px solid var(--c) !important; }
 .matecard .mytks { margin: 10px 0; overflow: visible; }
 
+/* ---------- solo campaign ---------- */
+.solocard { display: flex; align-items: center; gap: 20px; margin-top: 16px; }
+.solocard h2 { margin-bottom: 4px; }
+.solocard p { margin: 0; color: var(--ink-2); }
+.solocard .btn { flex: none; }
+.cprog { height: 14px; border: 2px solid var(--ink); border-radius: 999px; background: #fff; overflow: hidden; margin: 10px 0 4px; }
+.cprog div { height: 100%; background: var(--ok); }
+.cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.ccard { position: relative; text-align: left; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 12px 10px 44px; display: flex; flex-direction: column; gap: 2px; min-height: 76px; box-shadow: var(--lift); }
+.ccard b { font-size: 16px; font-weight: 600; }
+.ccard small { font-size: 13px; color: var(--ink-2); line-height: 1.25; }
+.ccard .cst { position: absolute; left: 10px; top: 10px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 700; background: var(--tile); }
+.ccard.won .cst { background: var(--ok); color: #fff; }
+.ccard.on { background: var(--ink); color: #fff; }
+.ccard.on small { color: #DCE3EE; }
+.ccard.locked { opacity: .5; box-shadow: none; }
+.ccard:disabled { color: var(--ink); cursor: default; }
+@media (max-width: 640px) { .solocard { flex-direction: column; align-items: flex-start; } }
+.resumebtn { width: 100%; margin: 6px 0 14px; }
+
 </style>
 </head>
 <body>
@@ -783,7 +803,28 @@ safe-buffer/index.js:
   }
 
   // Goals: a list of checks. coins/rep/meals are team totals; each = meals per chef.
+  // One chef (solo campaign): the rulebook only has 2–4 player goals, so these are scaled down from
+  // the 2-player ones (our own numbers).
+  function soloGoal(scen, challenge) {
+    switch (+scen) {
+      case 1: return { each: 2 };
+      case 2: return { meals: 3 };
+      case 3: return { coins: challenge ? 14 : 10 };
+      case 4: return { coins: challenge ? 20 : 14 };
+      case 5: return { coins: challenge ? 6 : 1, payroll: true };
+      case 6: return challenge ? { coins: 7, rep: 3, payroll: true } : { coins: 1, rep: 2, payroll: true };
+      case 7: return challenge ? { coins: 12, rep: 7, noStrike: true } : { coins: 4, rep: 5, noStrike: true };
+      case 8: case 12: return challenge && +scen === 8 ? { coins: 9, rep: 9, noStrike: true } : { coins: 5, rep: 5, noStrike: true };
+      case 9: return { equality: 2, noStrike: true };
+      case 10: return { meals: 8, noStrike: true };
+      case 11: return { mix: { reg: 2, ch: 1, vip: 1 }, coins: 7, noStrike: true };
+      case 13: return { coins: 10, rep: 9, noStrike: true };
+    }
+    return { each: 2 };
+  }
+
   function goalOf(scen, n, challenge) {
+    if (n === 1) return soloGoal(scen, challenge);
     const p = pc(n);
     const t = (a, b, c) => ({ 2: a, 3: b, 4: c })[p];
     switch (+scen) {
@@ -802,12 +843,13 @@ safe-buffer/index.js:
     }
     return { each: 2 };
   }
-  function goalText(g) {
+  function goalText(g, solo) {
     const out = [];
-    if (g.each) out.push(`every chef serves ${g.each} meals`);
-    if (g.meals) out.push(`serve ${g.meals} meals together`);
-    if (g.mix) out.push(`every chef serves ${g.mix.reg} ordinary, ${g.mix.ch} ⭐ and ${g.mix.vip} 👑 guests`);
-    if (g.equality) out.push(`every chef serves ${g.equality} guests early (🛎️) in every shift`);
+    const each = solo ? 'serve' : 'every chef serves';
+    if (g.each) out.push(`${each} ${g.each} meals`);
+    if (g.meals) out.push(`serve ${g.meals} meals${solo ? '' : ' together'}`);
+    if (g.mix) out.push(`${each} ${g.mix.reg} ordinary, ${g.mix.ch} ⭐ and ${g.mix.vip} 👑 guests`);
+    if (g.equality) out.push(`${each} ${g.equality} guests early (🛎️) in every shift`);
     if (g.payroll) out.push(g.coins > 1 ? `pay all salaries and end with ${g.coins} coins` : 'pay all salaries');
     else if (g.coins) out.push(`end with ${g.coins} coins`);
     if (g.rep) out.push(`reach ${g.rep} reputation`);
@@ -1483,6 +1525,8 @@ safe-buffer/index.js:
       }
     }
     if (cfg.salary) payroll(s, rep);
+    // Nobody left who can work (and so nobody who could pay a timer back): the restaurant closes.
+    if (cfg.strike && Object.keys(s.off).every(k => s.off[k].every(Boolean))) rep.allStrike = true;
     if (cfg.mission === 1) {
       rep.equality = s.players.map(p => ({ pid: p.id, early: rep.orders.filter(o => o.pid === p.id && o.ok && o.early).length }));
       rep.equalityFailed = rep.equality.some(x => x.early < s.goal.equality);
@@ -1492,7 +1536,7 @@ safe-buffer/index.js:
     rep.chefs = chefs;
     s.reports.push(rep);
     s.open = {};
-    if (last || rep.bankrupt || rep.equalityFailed) finish(s, now);
+    if (last || rep.bankrupt || rep.equalityFailed || rep.allStrike) finish(s, now);
     else s.phase = 'between';
   }
 
@@ -1503,14 +1547,15 @@ safe-buffer/index.js:
     const all = R.flatMap(r => r.orders.map(o => Object.assign({ shift: r.shift }, o)));
     const okList = all.filter(o => o.ok);
     const out = [];
+    const Each = s.players.length === 1 ? 'Serve' : 'Every chef serves';
     const perServed = s.players.map(p => okList.filter(o => o.pid === p.id).length);
-    if (g.each) out.push({ label: `Every chef serves ${g.each} meals`, ok: perServed.every(x => x >= g.each), have: perServed.join(' / '), need: g.each });
+    if (g.each) out.push({ label: `${Each} ${g.each} meals`, ok: perServed.every(x => x >= g.each), have: perServed.join(' / '), need: g.each });
     if (g.meals) out.push({ label: `${g.meals} meals served`, ok: okList.length >= g.meals, have: okList.length, need: g.meals });
     if (g.mix) {
       const okEach = s.players.every(p => ['reg', 'ch', 'vip'].every(k => okList.filter(o => o.pid === p.id && o.kind === k).length >= g.mix[k]));
-      out.push({ label: `Every chef serves ${g.mix.reg} ordinary, ${g.mix.ch} ⭐ and ${g.mix.vip} 👑 guests`, ok: okEach, have: s.players.map(p => ['reg', 'ch', 'vip'].map(k => okList.filter(o => o.pid === p.id && o.kind === k).length).join('·')).join(' / '), need: `${g.mix.reg}·${g.mix.ch}·${g.mix.vip}` });
+      out.push({ label: `${Each} ${g.mix.reg} ordinary, ${g.mix.ch} ⭐ and ${g.mix.vip} 👑 guests`, ok: okEach, have: s.players.map(p => ['reg', 'ch', 'vip'].map(k => okList.filter(o => o.pid === p.id && o.kind === k).length).join('·')).join(' / '), need: `${g.mix.reg}·${g.mix.ch}·${g.mix.vip}` });
     }
-    if (g.equality) out.push({ label: `Every chef serves ${g.equality} guests early in every shift`, ok: !R.some(r => r.equalityFailed) && R.length === s.shifts, have: `${R.filter(r => !r.equalityFailed).length} shifts`, need: `${s.shifts} shifts` });
+    if (g.equality) out.push({ label: `${Each} ${g.equality} guests early in every shift`, ok: !R.some(r => r.equalityFailed) && R.length === s.shifts, have: `${R.filter(r => !r.equalityFailed).length} shifts`, need: `${s.shifts} shifts` });
     if (g.payroll) out.push({ label: 'All salaries paid', ok: !R.some(r => r.bankrupt), have: R.some(r => r.bankrupt) ? 'no' : 'yes', need: 'yes' });
     if (g.coins) out.push({ label: `${g.coins} coin${g.coins === 1 ? '' : 's'} in the office`, ok: s.coins >= g.coins, have: s.coins, need: g.coins });
     if (g.rep) out.push({ label: `${g.rep} reputation`, ok: s.rep >= g.rep, have: s.rep, need: g.rep });
@@ -1536,6 +1581,7 @@ safe-buffer/index.js:
       checks,
       win: checks.every(c => c.ok),
       bankrupt: s.reports.some(r => r.bankrupt),
+      allStrike: s.reports.some(r => r.allStrike),
       equalityFailed: s.reports.some(r => r.equalityFailed),
       served: per.reduce((a, x) => a + x.served, 0),
       coins: s.coins,
@@ -1684,10 +1730,12 @@ safe-buffer/index.js:
   let netStatus = '';
   let seenErr = 0;
   let sound = LS.get('kc-sound', true);
-  const ui = { screen: 'home', sel: null, armed: null, menu: false, help: false, joining: false, results: true, shop: { ing: null, cheap: [], pricey: [] }, throwSel: [], mate: null };
+  const ui = { screen: 'home', sel: null, armed: null, menu: false, help: false, joining: false, results: true, shop: { ing: null, cheap: [], pricey: [] }, throwSel: [], mate: null, soloResume: null };
 
   const app = document.getElementById('app');
-  const hostNow = () => (role === 'host' ? Date.now() : Date.now() + offset);
+  const hostNow = () => (role !== 'guest' ? Date.now() : Date.now() + offset);
+  // The solo campaign runs the whole game on this iPad, like a host without a relay.
+  const isHost = () => role === 'host' || role === 'solo';
   const game = () => (wrap && wrap.game) || null;
   const playerOf = (g, id) => (g ? g.players : wrap.lobby.players).find(p => p.id === id);
   const fmt = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
@@ -1741,7 +1789,7 @@ safe-buffer/index.js:
   // ---------- host ----------
   function newRoomCode() { return WORDS[Math.floor(Math.random() * WORDS.length)] + String(Math.floor(10 + Math.random() * 90)); }
 
-  function saveHost() { LS.set('kc-host', { room, wrap, savedAt: Date.now(), pid: me.pid }); }
+  function saveHost() { LS.set(role === 'solo' ? 'kc-solo' : 'kc-host', { room, wrap, savedAt: Date.now(), pid: me.pid }); }
 
   async function hostStart(resume) {
     role = 'host';
@@ -1806,12 +1854,12 @@ safe-buffer/index.js:
   }
 
   function hostTick() {
-    if (role !== 'host' || !wrap) return;
+    if (!isHost() || !wrap) return;
     const g = game();
     if (g) {
       const before = g.phase;
       if (E.tick(g, Date.now())) {
-        if (g.phase === 'results' && before !== 'results') saveLog(g);
+        if (g.phase === 'results' && before !== 'results') { saveLog(g); if (role === 'solo') campaignResult(g); }
         if (g.phase !== before) onPhaseChange(before, g.phase);
         changed();
       }
@@ -1872,7 +1920,7 @@ safe-buffer/index.js:
   function act(a) {
     a.pid = me.pid;
     const g = game();
-    if (role === 'host') {
+    if (isHost()) {
       if (!g) return;
       const err = E.apply(g, a, Date.now());
       if (err) { toast(err, 'err'); return false; }
@@ -2033,7 +2081,7 @@ safe-buffer/index.js:
     const canRejoin = gsaved && Date.now() - gsaved.at < 12 * 3600e3;
     return `<main class="home">
       <h1 class="logo">Küchen<span>-</span>Chaos</h1>
-      <p class="sub">The real-time kitchen game for 2–4 chefs, one iPad each.</p>
+      <p class="sub">The real-time kitchen game for 1–4 chefs, one iPad each.</p>
       <section class="card homecard">
         <label class="fld">Your name<input id="nm" maxlength="14" value="${esc(me.name)}" placeholder="e.g. Juna" autocomplete="off"></label>
         <div class="fld">Your colour<div class="colors">${COLOR_NAMES.map(c => `<button class="cbtn ${me.color === c ? 'on' : ''}" style="--c:${COLORS[c]}" data-a="color" data-c="${c}" aria-label="${c}"></button>`).join('')}</div></div>
@@ -2052,7 +2100,81 @@ safe-buffer/index.js:
           </div>
         </div>
       </section>
+      <section class="card homecard solocard">
+        <div><h2>Play alone</h2><p>The solo campaign: cook your way through all 8 restaurants and the master chef missions, one after the other. Your progress is saved on this iPad.</p></div>
+        <button class="btn big" data-a="campaign">Solo campaign</button>
+      </section>
       <button class="link" data-a="help">How to play</button>
+    </main>`;
+  }
+
+  // ---------- solo campaign ----------
+  const CAMP_KEY = () => 'kc-campaign-' + me.pid;
+  const camp = () => LS.get(CAMP_KEY(), { unlocked: 1, done: {} });
+  function campaignResult(g) {
+    const c = camp(), n = g.settings.scenario, R = g.results;
+    const d = c.done[n] || { plays: 0, won: false, challenge: false };
+    d.plays++;
+    if (R.win) { d.won = true; if (g.settings.challenge) d.challenge = true; }
+    d.best = Math.max(d.best || 0, R.coins || R.served || 0);
+    c.done[n] = d;
+    if (R.win) c.unlocked = Math.max(c.unlocked, n + 1);
+    LS.set(CAMP_KEY(), c);
+  }
+  function openCampaign() {
+    role = 'solo'; room = 'SOLO';
+    const st = LS.get('kc-solo-settings', { scenario: 1, workerSec: 30, shiftSec: 270, strict: false, challenge: false });
+    const saved = LS.get('kc-solo', null);
+    if (saved && saved.pid === me.pid && saved.wrap && saved.wrap.game && saved.wrap.game.v === 3 && saved.wrap.game.phase !== 'results' && Date.now() - saved.savedAt < 6 * 3600e3) {
+      ui.soloResume = saved.wrap;
+    } else ui.soloResume = null;
+    wrap = { room, rev: 1, lobby: { players: [{ id: me.pid, name: me.name, color: me.color }], settings: st }, game: null };
+    ui.screen = 'game';
+    render();
+  }
+  function startSolo(n) {
+    const S = wrap.lobby.settings;
+    if (S.scenario !== n) { S.scenario = n; S.shiftSec = E.SCEN[n].normal; S.challenge = false; }
+    LS.set('kc-solo-settings', S);
+    wrap.lobby.players = [{ id: me.pid, name: me.name, color: me.color }];
+    wrap.game = E.newGame(S, wrap.lobby.players);
+    ui.results = true; ui.sel = null;
+    changed();
+    keepAwake();
+  }
+  function renderCampaign() {
+    const c = camp(), S = wrap.lobby.settings, n = S.scenario || 1;
+    const all = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+    const open = k => k <= 8 ? k <= c.unlocked : c.unlocked > 8;
+    const wonCount = [1, 2, 3, 4, 5, 6, 7, 8].filter(k => c.done[k] && c.done[k].won).length;
+    const card = k => {
+      const d = c.done[k] || {};
+      const st = !open(k) ? '🔒' : d.challenge ? '⭐' : d.won ? '✓' : d.plays ? `${d.plays}×` : '▶';
+      return `<button class="ccard ${n === k ? 'on' : ''} ${open(k) ? '' : 'locked'} ${d.won ? 'won' : ''}" ${open(k) ? `data-a="pickSolo" data-n="${k}"` : 'disabled'}>
+        <span class="cst">${st}</span><b>${scenTitle(k)}</b><small>${open(k) ? esc(E.goalText(E.goalOf(k, 1, false), true)) : k > 8 ? 'Opens after restaurant 8' : `Win restaurant ${k - 1} to open`}</small></button>`;
+    };
+    const seg = (key, vals, labels) => `<div class="seg">${vals.map((v, i) => `<button class="${S[key] === v ? 'on' : ''}" data-a="set" data-k="${key}" data-v="${v}">${labels[i]}</button>`).join('')}</div>`;
+    const normal = E.SCEN[n].normal;
+    const canChallenge = n >= 3 && n <= 8 && c.done[n] && c.done[n].won;
+    return `<main class="lobby campaign">
+      <h1 class="logo small">Küchen<span>-</span>Chaos</h1>
+      <section class="card">
+        <h2>${esc(me.name || 'Chef')}'s solo campaign</h2>
+        <div class="cprog"><div style="width:${wonCount / 8 * 100}%"></div></div>
+        <p class="note">${wonCount} of 8 restaurants won${c.unlocked > 8 ? ' — the master chef missions are open' : ''}. Win a restaurant to open the next one.</p>
+        ${ui.soloResume ? '<button class="btn big resumebtn" data-a="soloResume">Continue the game you started</button>' : ''}
+        <div class="cgrid">${all.filter(k => k <= 8).map(card).join('')}</div>
+        <h2>Master chef missions</h2>
+        <div class="cgrid">${all.filter(k => k > 8).map(card).join('')}</div>
+        <h2>${scenTitle(n)}</h2>
+        <p class="note goalnote">Goal: ${E.goalText(E.goalOf(n, 1, S.challenge && canChallenge), true)}${E.SCEN[n].shifts > 1 ? ` — over ${E.SCEN[n].shifts} shifts` : ''}.</p>
+        <div class="setrow"><span>Sand timer</span>${DEV ? seg('workerSec', [3, 20, 25, 30, 35], ['3 s', '20 s', '25 s', '30 s', '35 s']) : seg('workerSec', [20, 25, 30, 35], ['20 s', '25 s', '30 s', '35 s'])}</div>
+        <div class="setrow"><span>Shift length</span>${seg('shiftSec', (DEV ? [40] : []).concat([normal, 300]), (DEV ? ['0:40'] : []).concat([fmt(normal * 1000) + ' normal', '5:00 family']))}</div>
+        <div class="setrow"><span>Wrong moves</span>${seg('strict', [false, true], ['Allowed, checked at the end', 'Blocked'])}</div>
+        ${canChallenge ? `<div class="setrow"><span>Goal</span>${seg('challenge', [false, true], ['Normal', 'Challenge ⭐'])}</div>` : ''}
+        <button class="btn big" data-a="playSolo">Play ${scenTitle(n)}</button>
+      </section>
+      <div class="lobbylinks"><button class="link" data-a="help">How to play</button><button class="link" data-a="leave">Back to the start</button></div>
     </main>`;
   }
 
@@ -2379,7 +2501,7 @@ safe-buffer/index.js:
     return txt ? `<li style="--c:${colorOf(p.color)}"><b>${esc(p.name)}</b> ${txt()}</li>` : '';
   }
   function feedPanel(g) {
-    if (!g.feed || !g.feed.length || g.phase === 'ready') return '';
+    if (!g.feed || !g.feed.length || g.phase === 'ready' || g.players.length < 2) return '';
     return `<ul class="feed">${g.feed.slice(-2).reverse().map(f => feedLine(g, f)).join('')}</ul>`;
   }
 
@@ -2438,7 +2560,7 @@ safe-buffer/index.js:
   }
 
   function renderBetween(g) {
-    const host = role === 'host';
+    const host = isHost();
     const r = g.reports[g.reports.length - 1];
     const hostP = wrap.lobby.players[0];
     const eq = r.equality ? `<p class="money">🛎️ Served early this shift: ${r.equality.map(x => `${esc((playerOf(g, x.pid) || {}).name)} ${x.early}`).join(', ')} (each needs ${g.goal.equality}).</p>` : '';
@@ -2454,7 +2576,7 @@ safe-buffer/index.js:
   }
 
   function renderReady(g) {
-    const host = role === 'host';
+    const host = isHost();
     const hostP = wrap.lobby.players[0];
     const n = g.settings.scenario, t = fmt(g.settings.shiftSec * 1000);
     const cfg = E.cfgOf(g);
@@ -2472,19 +2594,20 @@ safe-buffer/index.js:
     return `<div class="sheet readysheet"><div class="card">
       <h2>${scenTitle(n)}</h2>
       <p>${extra}</p>
-      <p><b>Goal:</b> ${E.goalText(g.goal)}. ${cfg.shifts > 1 ? `${cfg.shifts} shifts of ${t}.` : `${t} on the clock.`} Each chef has ${cfg.timers === 1 ? 'one sand timer' : 'two sand timers'} of ${g.settings.workerSec} seconds.${g.settings.strict ? ' Wrong moves are blocked.' : ' Meals are checked when a shift ends.'}</p>
+      <p><b>Goal:</b> ${E.goalText(g.goal, g.players.length === 1)}. ${cfg.shifts > 1 ? `${cfg.shifts} shifts of ${t}.` : `${t} on the clock.`} Each chef has ${cfg.timers === 1 ? 'one sand timer' : 'two sand timers'} of ${g.settings.workerSec} seconds.${g.settings.strict ? ' Wrong moves are blocked.' : ' Meals are checked when a shift ends.'}</p>
       ${host ? '<button class="btn big" data-a="startShift">Start the shift</button>' : `<p class="note">Waiting for ${esc(hostP ? hostP.name : 'the host')} to start the shift.</p>`}
       <button class="link" data-a="help">How to play</button>
     </div></div>`;
   }
 
   function renderResults(g) {
-    const R = g.results, host = role === 'host';
+    const R = g.results, host = isHost();
     const log = host ? LS.get('kc-log', []) : [];
     const wins = log.filter(x => (x.scenario || 1) === (R.scenario || 1) && x.win && x.goalAt != null);
     const best = wins.length ? Math.min.apply(null, wins.map(x => x.goalAt)) : null;
     const head = R.win ? 'You did it — every goal reached!'
       : R.bankrupt ? 'The office couldn\'t pay the salaries — the restaurant had to close.'
+      : R.allStrike ? 'Every sand timer went on strike — the restaurant had to close.'
       : R.equalityFailed ? 'Not every chef served enough guests early in that shift.'
       : 'Not every goal reached this time.';
     const checks = (R.checks || []).map(c => `<li class="${c.ok ? 'ok' : 'bad'}"><span class="mark">${c.ok ? '✓' : '✗'}</span>${esc(c.label)} <small>(you: ${esc(String(c.have))})</small></li>`).join('');
@@ -2499,7 +2622,10 @@ safe-buffer/index.js:
       <p class="sub">${R.served} guest${R.served === 1 ? '' : 's'} served correctly${R.goalAt != null ? ` · goal reached at ${fmt(R.goalAt)}` : ''}${best != null ? ` · best ever ${fmt(best)}` : ''}</p>
       <div class="gcols">${g.players.map(p => `<div class="gcol" style="--c:${COLORS[p.color]}"><h3>${dot(p.color)}${esc(p.name)}</h3>${reps.some(r => r.orders.some(o => o.pid === p.id)) ? reps.map((r, i) => r.orders.some(o => o.pid === p.id) ? `${multi ? `<div class="gshift">Shift ${r.shift}</div>` : ''}${guestList(g, r, p.id, i === reps.length - 1)}` : '').join('') : '<p class="none">no guests</p>'}</div>`).join('')}</div>
       <div class="rbtns">
-        ${host ? '<button class="btn big" data-a="again">Play again</button><button class="btn ghost" data-a="lobby">Change restaurant or chefs</button><button class="btn ghost" data-a="log">Download game log</button>' : '<p class="note">The host can start the next round.</p>'}
+        ${role === 'solo' ? (R.win
+          ? `${R.scenario < 13 ? '<button class="btn big" data-a="nextSolo">Next restaurant ▶</button>' : ''}<button class="btn ghost" data-a="again">Play again</button><button class="btn ghost" data-a="lobby">Campaign</button>`
+          : `<button class="btn big" data-a="again">Try again</button>${R.scenario < 13 ? '<button class="btn ghost" data-a="skipSolo">Continue anyway ▶</button>' : ''}<button class="btn ghost" data-a="lobby">Campaign</button>`)
+          : host ? '<button class="btn big" data-a="again">Play again</button><button class="btn ghost" data-a="lobby">Change restaurant or chefs</button><button class="btn ghost" data-a="log">Download game log</button>' : '<p class="note">The host can start the next round.</p>'}
         <button class="link" data-a="hideResults">Look at the board</button>
       </div>
     </div></div>`;
@@ -2526,15 +2652,15 @@ safe-buffer/index.js:
   }
 
   function renderMenu() {
-    const host = role === 'host', g = game();
+    const host = isHost(), g = game();
     return `<div class="sheet" data-a="closeMenu"><div class="card menu" data-stop="1">
       <h2>Menu</h2>
       <button class="btn ghost" data-a="sound">Sound: ${sound ? 'on' : 'off'}</button>
       <button class="btn ghost" data-a="help">How to play</button>
       ${host && g && g.phase === 'play' ? '<button class="btn ghost" data-a="endNow">End the shift now</button>' : ''}
-      ${host && g ? '<button class="btn ghost" data-a="lobby">Back to the lobby</button>' : ''}
+      ${host && g ? `<button class="btn ghost" data-a="lobby">${role === 'solo' ? 'Back to the campaign' : 'Back to the lobby'}</button>` : ''}
       ${host ? '<button class="btn ghost" data-a="log">Download game log</button>' : ''}
-      <button class="btn ghost" data-a="leave">Leave this game</button>
+      ${role === 'solo' ? '' : '<button class="btn ghost" data-a="leave">Leave this game</button>'}
       <button class="btn" data-a="closeMenu">Close</button>
     </div></div>`;
   }
@@ -2552,7 +2678,7 @@ safe-buffer/index.js:
     let html;
     if (ui.screen === 'home' || !role) html = renderHome();
     else if (ui.joining || !wrap) html = `<main class="home"><h1 class="logo small">Küchen<span>-</span>Chaos</h1><p class="sub">Looking for ${esc(room || '')}…</p></main>`;
-    else if (!wrap.game) html = renderLobby();
+    else if (!wrap.game) html = role === 'solo' ? renderCampaign() : renderLobby();
     else html = renderGame(wrap.game);
     if (ui.help) html += renderHelp();
     if (ui.menu) html += renderMenu();
@@ -2655,6 +2781,27 @@ safe-buffer/index.js:
         if (!me.name) { toast('Type your name first.', 'err'); document.getElementById('nm').focus(); return; }
         hostStart(null); break;
       case 'resume': hostStart(LS.get('kc-host', null)); break;
+      case 'campaign':
+        if (!me.name) { toast('Type your name first.', 'err'); document.getElementById('nm').focus(); return; }
+        openCampaign(); break;
+      case 'pickSolo': {
+        const n = +t.dataset.n, S = wrap.lobby.settings;
+        if (S.scenario !== n) { S.scenario = n; S.shiftSec = E.SCEN[n].normal; S.challenge = false; LS.set('kc-solo-settings', S); }
+        render(); break;
+      }
+      case 'playSolo': startSolo(wrap.lobby.settings.scenario || 1); break;
+      case 'soloResume': wrap = ui.soloResume; ui.soloResume = null; render(); keepAwake(); break;
+      case 'nextSolo': {
+        const n = (game() && game().settings.scenario) || 1;
+        if (n < 13) startSolo(n + 1);
+        break;
+      }
+      case 'skipSolo': {
+        const c = camp(), n = game().settings.scenario;
+        c.unlocked = Math.max(c.unlocked, n + 1); LS.set(CAMP_KEY(), c);
+        if (n < 13) startSolo(n + 1);
+        break;
+      }
       case 'join':
         if (!me.name) { toast('Type your name first.', 'err'); document.getElementById('nm').focus(); return; }
         guestJoin(document.getElementById('code').value); break;
@@ -2664,29 +2811,31 @@ safe-buffer/index.js:
       case 'closeMenu': ui.menu = false; render(); break;
       case 'sound': sound = !sound; LS.set('kc-sound', sound); render(); break;
       case 'leave':
+        if (role === 'solo') { role = null; wrap = null; room = null; ui.menu = false; ui.screen = 'home'; render(); break; }
         if (role === 'host' && !confirm('Close the restaurant? The other iPads will lose this game.')) return;
         if (role === 'guest' && net) { if (!g) net.send({ type: 'leave', pid: me.pid }); net.close(); LS.del('kc-guest'); }
         if (role === 'host' && net) { net.clear(); net.close(); LS.del('kc-host'); }
         role = null; net = null; wrap = null; authWrap = null; optimisticAt = 0; room = null; offsets = []; ui.menu = false; ui.screen = 'home'; render(); break;
       case 'set': {
-        if (role !== 'host') return;
+        if (!isHost()) return;
         const k = t.dataset.k; let v = t.dataset.v;
         v = (k === 'strict' || k === 'challenge') ? v === 'true' : +v;
         wrap.lobby.settings[k] = v;
         if (k === 'scenario') wrap.lobby.settings.shiftSec = E.SCEN[v].normal;
+        if (role === 'solo') { LS.set('kc-solo-settings', wrap.lobby.settings); render(); break; }
         changed(); break;
       }
       case 'kick': wrap.lobby.players = wrap.lobby.players.filter(p => p.id !== t.dataset.id); changed(); break;
       case 'newgame': case 'again':
-        if (role !== 'host') return;
+        if (!isHost()) return;
         wrap.game = E.newGame(wrap.lobby.settings, wrap.lobby.players);
         ui.results = true; ui.sel = null; changed(); break;
       case 'lobby':
-        if (role !== 'host') return;
+        if (!isHost()) return;
         if (g && (g.phase === 'play' || g.phase === 'grace') && !confirm('Stop this shift and go back to the lobby?')) return;
         wrap.game = null; ui.menu = false; changed(); break;
-      case 'startShift': if (role === 'host' && g) { E.apply(g, { type: 'start' }, Date.now()); changed(); keepAwake(); } break;
-      case 'nextShift': if (role === 'host' && g) { const err = E.apply(g, { type: 'nextShift' }, Date.now()); if (err) toast(err, 'err'); changed(); keepAwake(); } break;
+      case 'startShift': if (isHost() && g) { E.apply(g, { type: 'start' }, Date.now()); changed(); keepAwake(); } break;
+      case 'nextShift': if (isHost() && g) { const err = E.apply(g, { type: 'nextShift' }, Date.now()); if (err) toast(err, 'err'); changed(); keepAwake(); } break;
       case 'shopIng': ui.shop.ing = t.dataset.ing; render(); break;
       case 'pickThrow': {
         const i = +t.dataset.seat;
@@ -2721,7 +2870,7 @@ safe-buffer/index.js:
         if (g && act({ type: 'buy', kind: k, spices: picks })) toast(`🚐 Bought ${picks.map(x => E.SP_INFO[x].e).join('')}`);
         break;
       }
-      case 'endNow': if (role === 'host' && g && confirm('End the shift now and check the meals?')) { E.apply(g, { type: 'endNow' }, Date.now()); ui.menu = false; changed(); } break;
+      case 'endNow': if (isHost() && g && confirm('End the shift now and check the meals?')) { E.apply(g, { type: 'endNow' }, Date.now()); ui.menu = false; changed(); } break;
       case 'log': downloadLog(); break;
       case 'hideResults': ui.results = false; render(); break;
       case 'showResults': ui.results = true; render(); break;
