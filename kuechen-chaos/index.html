@@ -111,12 +111,14 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
 .area h3 { font-size: 16px; margin-bottom: 6px; color: var(--ink-2); font-weight: 600; }
 .area h3 small { font-weight: 400; }
 .area.active { background: #FFF1D6; border-color: var(--heat); }
-.reception { grid-column: 1; grid-row: 1; }
-.dining { grid-column: 2 / 4; grid-row: 1 / 3; display: flex; flex-direction: column; }
-.store:nth-of-type(3) { grid-column: 1; grid-row: 2; }
-.store:nth-of-type(4) { grid-column: 1; grid-row: 3; }
-.stove { grid-column: 2; grid-row: 3; }
-.cupboard { grid-column: 3; grid-row: 3; }
+.reception { grid-area: rec; }
+.dining { grid-area: din; display: flex; flex-direction: column; }
+.st1 { grid-area: st1; } .st2 { grid-area: st2; }
+.stove { grid-area: stove; } .cupboard { grid-area: cup; }
+.area.green { grid-area: green; } .area.sink { grid-area: sink; }
+.board.scen-1 { grid-template-areas: "rec din din" "st1 din din" "st2 stove cup"; }
+.board.scen-2 { grid-template-areas: "rec din din" "green din din" "st1 st2 stove" "cup cup stove"; }
+.board.scen-3 { grid-template-areas: "rec din din" "green din din" "st1 st2 stove" "sink cup cup"; }
 
 /* action spaces: the sand timers */
 .spots { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -253,12 +255,9 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
 }
 @media (max-width: 640px) {
   .board { grid-template-columns: 1fr 1fr; }
-  .reception { grid-column: 1; grid-row: 1; }
-  .dining { grid-column: 1 / 3; grid-row: 2; }
-  .store:nth-of-type(3) { grid-column: 2; grid-row: 1; }
-  .store:nth-of-type(4) { grid-column: 1; grid-row: 3; }
-  .stove { grid-column: 2; grid-row: 3; }
-  .cupboard { grid-column: 1 / 3; grid-row: 4; }
+  .board.scen-1 { grid-template-areas: "rec st1" "din din" "st2 stove" "cup cup"; }
+  .board.scen-2 { grid-template-areas: "rec green" "din din" "st1 st2" "stove cup"; }
+  .board.scen-3 { grid-template-areas: "rec green" "din din" "st1 st2" "stove cup" "sink sink"; }
   .who { display: none; }
   .brand small { display: none; }
 }
@@ -294,6 +293,66 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
   .glass { width: 58px; height: 58px; }
 }
 
+/* ---------- scenarios 2 & 3 ---------- */
+.rc { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.rc .queue { margin-top: 0; }
+.gh { display: flex; flex-direction: column; gap: 6px; }
+.spices { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.ing.spice { min-height: 40px; font-size: 18px; flex-direction: column; gap: 0; padding: 2px; }
+.ing.spice b { font-size: 13px; line-height: 1; }
+.sink .plates { gap: 2px; }
+.pl.dirtyp { background: #E9DCC4; box-shadow: inset 0 0 0 3px #CBB58F; }
+.pbtn.dirty b { color: #8A6A35; }
+.goalchip { display: flex; align-items: baseline; gap: 6px; background: rgba(255,255,255,.12); border-radius: 10px; padding: 4px 10px; font-size: 18px; white-space: nowrap; }
+.goalchip b { font-size: 24px; }
+.goalchip small { font-size: 14px; opacity: .8; }
+.coin { font-size: 13px; font-weight: 600; margin-left: 4px; white-space: nowrap; }
+.tk-head .coin { margin-left: auto; }
+.tk-head .coin + .tk-tag { margin-left: 6px; }
+.mt-e .coin { vertical-align: 4px; }
+.ni.sp { margin-left: 2px; }
+.chip.spc { background: #EEF7EA; }
+.bin { margin-left: auto; background: #fff; border: 2px solid var(--ink-2); border-radius: 10px; min-width: 40px; height: 36px; font-size: 16px; padding: 0 8px; }
+.bin.armed { background: var(--bad); border-color: var(--bad); color: #fff; font-size: 13px; font-weight: 600; }
+.glasses { display: flex; gap: 8px; flex: none; }
+.glasses.n2 .glass { width: 54px; height: 54px; }
+.glasses.n2 .glass .hg { font-size: 22px; }
+.scens { display: grid; gap: 8px; }
+.scen { text-align: left; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+.scen b { font-size: 19px; font-weight: 600; }
+.scen small { color: var(--ink-2); font-size: 15px; }
+.scen.on { background: var(--ink); color: #fff; }
+.scen.on small { color: #DCE3EE; }
+.scen:disabled { color: var(--ink); }
+.scen.on:disabled { color: #fff; }
+.scen .won { color: var(--ok); }
+.scen.on .won { color: #7EE2AE; }
+.money { font-size: 17px !important; margin: 8px 0 0; }
+@media (orientation: landscape) and (max-height: 780px) {
+  .goalchip b { font-size: 20px; }
+  .ing.spice { min-height: 36px; }
+}
+
+/* compact cards and area headers (fits Safari's landscape height with all rooms) */
+.ahead { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px; }
+.ahead h3 { margin: 0; }
+.ahead .spots { flex-wrap: nowrap; gap: 6px; }
+.seat { min-height: 70px; }
+.seat.guest { padding: 6px 7px; gap: 4px; }
+.mt-top { display: flex; align-items: center; gap: 5px; width: 100%; min-width: 0; }
+.mt-top .mt-e { font-size: 22px; flex: none; }
+.mt-top .mt-n { margin: 0; font-size: 14px; line-height: 1.1; flex: 1; min-width: 0; }
+.mt-top .coin { margin-left: auto; flex: none; }
+.mt-r { gap: 4px; font-size: 13px; }
+.mt-i { letter-spacing: -1px; }
+.green .spices { margin-top: 0; }
+.sink .plates { align-items: center; }
+@media (orientation: landscape) and (max-height: 780px) {
+  .ahead .spot { width: 46px; height: 46px; font-size: 19px; }
+  .ahead .spot.taken .ini { width: 27px; height: 27px; font-size: 15px; }
+  .seat { min-height: 66px; }
+}
+
 </style>
 </head>
 <body>
@@ -321,7 +380,7 @@ safe-buffer/index.js:
 
 </script>
 <script>
-// Küchen-Chaos rules engine — Scenario 1 ("Your First Restaurant") of the Kitchen Rush revised rules.
+// Küchen-Chaos rules engine — scenarios 1–3 of the Kitchen Rush revised rules.
 // Pure state + actions. The host applies actions and broadcasts the state; guests only render it.
 (function (root) {
   'use strict';
@@ -335,38 +394,81 @@ safe-buffer/index.js:
     veg: { e: '🥕', n: 'Veggies' },
     pasta: { e: '🍝', n: 'Pasta' },
   };
+  // The five spice colours of the original: white, black, green, yellow, red.
+  const SPICES = ['salt', 'pepper', 'herbs', 'curry', 'chili'];
+  const SP_INFO = {
+    salt: { e: '🧂', n: 'Salt & sugar' },
+    pepper: { e: '⚫', n: 'Pepper' },
+    herbs: { e: '🌿', n: 'Herbs' },
+    curry: { e: '🟡', n: 'Curry & mustard' },
+    chili: { e: '🌶️', n: 'Chili' },
+  };
   const PLATES = ['S', 'M', 'L', 'XL'];
   const PLATE_NAME = { S: 'Small', M: 'Medium', L: 'Large', XL: 'Extra large' };
 
-  // The 8 "Friends" patrons. Plate mix (2 S, 4 M, 1 L, 1 XL) matches the cupboard, and the
-  // ingredient totals fit the two storage rooms, as in the original scenario 1.
+  // 8 Friends (all scenarios) + 22 Regular patrons (scenario 2+). sp = spices, c = coins paid (scenario 3+).
   const DISHES = {
-    pizza:     { name: 'Pizza',            e: '🍕', plate: 'M',  ing: { bread: 2, cheese: 1 },          cook: 2 },
-    burger:    { name: 'Burger',           e: '🍔', plate: 'M',  ing: { bread: 1, meat: 1, cheese: 1 }, cook: 2 },
-    mac:       { name: 'Mac & Cheese',     e: '🥣', plate: 'M',  ing: { pasta: 1, cheese: 2 },          cook: 1 },
-    salad:     { name: 'Garden Salad',     e: '🥗', plate: 'M',  ing: { salad: 2, cheese: 1 },          cook: 0 },
-    sate:      { name: 'Sate Skewers',     e: '🍢', plate: 'S',  ing: { meat: 2 },                      cook: 1 },
-    toast:     { name: 'Cheese Toast',     e: '🥪', plate: 'S',  ing: { bread: 1, cheese: 1 },          cook: 1 },
-    spaghetti: { name: 'Spaghetti Bolognese', e: '🍝', plate: 'L', ing: { pasta: 1, meat: 1, veg: 1 },  cook: 3 },
-    schnitzel: { name: 'Schnitzel & Veggies', e: '🍖', plate: 'XL', ing: { meat: 1, salad: 1, veg: 2 }, cook: 2 },
+    // Friends
+    pizza:     { name: 'Pizza',               e: '🍕', plate: 'M',  ing: { bread: 2, cheese: 1 },          cook: 2, c: 3, friend: true },
+    burger:    { name: 'Burger',              e: '🍔', plate: 'M',  ing: { bread: 1, meat: 1, cheese: 1 }, cook: 2, c: 3, friend: true },
+    mac:       { name: 'Mac & Cheese',        e: '🥣', plate: 'M',  ing: { pasta: 1, cheese: 2 },          cook: 1, c: 2, friend: true },
+    salad:     { name: 'Garden Salad',        e: '🥗', plate: 'M',  ing: { salad: 2, cheese: 1 },          cook: 0, c: 2, friend: true },
+    sate:      { name: 'Sate Skewers',        e: '🍢', plate: 'S',  ing: { meat: 2 },                      cook: 1, c: 2, friend: true },
+    toast:     { name: 'Cheese Toast',        e: '🥪', plate: 'S',  ing: { bread: 1, cheese: 1 },          cook: 1, c: 2, friend: true },
+    spaghetti: { name: 'Spaghetti Bolognese', e: '🍝', plate: 'L',  ing: { pasta: 1, meat: 1, veg: 1 },    cook: 3, c: 4, friend: true },
+    schnitzel: { name: 'Schnitzel & Veggies', e: '🍖', plate: 'XL', ing: { meat: 1, salad: 1, veg: 2 },    cook: 2, c: 4, friend: true },
+    // Regular patrons
+    mie:       { name: 'Mie Goreng',          e: '🥡', plate: 'M',  ing: { pasta: 1, veg: 1, meat: 1 },    sp: { chili: 1 },              cook: 2, c: 4 },
+    soup:      { name: 'Tomato Soup',         e: '🍅', plate: 'M',  ing: { veg: 2 },                       sp: { herbs: 1, salt: 1 },     cook: 2, c: 3 },
+    quesadilla:{ name: 'Quesadilla',          e: '🫓', plate: 'M',  ing: { bread: 1, cheese: 1, veg: 1 },  sp: { chili: 1 },              cook: 1, c: 3 },
+    doner:     { name: 'Döner Kebab',         e: '🥙', plate: 'M',  ing: { bread: 1, meat: 1, salad: 1 },  sp: { herbs: 1 },              cook: 1, c: 3 },
+    tacos:     { name: 'Tacos',               e: '🌮', plate: 'M',  ing: { bread: 1, meat: 1, veg: 1 },    sp: { chili: 1 },              cook: 1, c: 3 },
+    meatballs: { name: 'Meatballs',           e: '🧆', plate: 'M',  ing: { meat: 2, bread: 1 },            sp: { herbs: 1 },              cook: 2, c: 3 },
+    stew:      { name: 'Veggie Stew',         e: '🍲', plate: 'M',  ing: { veg: 2, bread: 1 },             sp: { pepper: 1, salt: 1 },    cook: 3, c: 4 },
+    spaetzle:  { name: 'Käsespätzle',         e: '🫕', plate: 'M',  ing: { pasta: 1, cheese: 2 },          sp: { salt: 1 },               cook: 2, c: 3 },
+    pancakes:  { name: 'Pancakes',            e: '🥞', plate: 'M',  ing: { bread: 2 },                     sp: { salt: 1 },               cook: 1, c: 2 },
+    chili:     { name: 'Chili con Carne',     e: '🫘', plate: 'M',  ing: { meat: 1, veg: 1 },              sp: { chili: 2 },              cook: 2, c: 4 },
+    hotdog:    { name: 'Hot Dog',             e: '🌭', plate: 'S',  ing: { bread: 1, meat: 1 },            sp: { curry: 1 },              cook: 1, c: 3 },
+    veggies:   { name: 'Grilled Veggies',     e: '🫑', plate: 'S',  ing: { veg: 2 },                       sp: { herbs: 1, salt: 1 },     cook: 1, c: 2 },
+    lasagne:   { name: 'Lasagne',             e: '🥘', plate: 'L',  ing: { pasta: 2, meat: 1, cheese: 1 }, sp: { herbs: 1 },              cook: 3, c: 5 },
+    caesar:    { name: 'Caesar Salad',        e: '🥗', plate: 'L',  ing: { salad: 2, cheese: 1, bread: 1 }, sp: { pepper: 1 },            cook: 0, c: 3 },
+    curry:     { name: 'Chicken Curry',       e: '🍛', plate: 'L',  ing: { meat: 1, veg: 1 },              sp: { curry: 2 },              cook: 2, c: 4 },
+    steak:     { name: 'Steak & Fries',       e: '🍟', plate: 'L',  ing: { meat: 2, veg: 1 },              sp: { salt: 1, pepper: 1 },    cook: 2, c: 5 },
+    gado:      { name: 'Gado-Gado',           e: '🥜', plate: 'L',  ing: { salad: 1, veg: 2 },             sp: { curry: 1 },              cook: 1, c: 3 },
+    ramen:     { name: 'Ramen',               e: '🍜', plate: 'L',  ing: { pasta: 1, meat: 1, veg: 1 },    sp: { salt: 1, herbs: 1 },     cook: 2, c: 4 },
+    burrito:   { name: 'Burrito',             e: '🌯', plate: 'L',  ing: { bread: 1, meat: 1, veg: 1, cheese: 1 }, sp: { chili: 1 },      cook: 1, c: 4 },
+    diavola:   { name: 'Spicy Pizza',         e: '🍕', plate: 'L',  ing: { bread: 2, cheese: 1, meat: 1 }, sp: { chili: 1 },              cook: 2, c: 4 },
+    platter:   { name: 'Family Platter',      e: '🍱', plate: 'XL', ing: { meat: 1, veg: 1, salad: 1, bread: 1, cheese: 1 }, sp: { salt: 1, pepper: 1 }, cook: 2, c: 6 },
+    roast:     { name: 'Sunday Roast',        e: '🍗', plate: 'XL', ing: { meat: 2, veg: 2 },              sp: { salt: 1, herbs: 1 },     cook: 3, c: 6 },
   };
-  const FRIENDS = Object.keys(DISHES);
+  Object.values(DISHES).forEach(d => { d.sp = d.sp || {}; });
+  const FRIENDS = Object.keys(DISHES).filter(k => DISHES[k].friend);
+  const REGULARS = Object.keys(DISHES).filter(k => !DISHES[k].friend);
+
   const MAX_ROW = 4;          // player board: top row + 4 cooking rows (row > cook time = overcooked)
-  const GOAL_PER_PLAYER = 2;  // scenario 1: every player serves 2 meals correctly
   const GRACE_MS = 20000;     // after time runs out, players may finish actions already started
 
-  const AREAS = ['reception', 'dining', 'storA', 'storB', 'stove'];
-  const AREA_NAME = { reception: 'Reception', dining: 'Dining room', storA: 'Storage room 1', storB: 'Storage room 2', stove: 'Stove' };
+  const SCEN = {
+    1: { name: 'Your first restaurant', timers: 1, normal: 270, spices: false, sink: false, money: false, bigger: false, fix: true, discard: false },
+    2: { name: 'The first week',        timers: 2, normal: 240, spices: true,  sink: false, money: false, bigger: true,  fix: false, discard: false },
+    3: { name: 'Cleaning up',           timers: 2, normal: 240, spices: true,  sink: true,  money: true,  bigger: true,  fix: false, discard: true },
+  };
+
+  const AREA_NAME = { reception: 'Reception', dining: 'Dining room', storA: 'Storage room 1', storB: 'Storage room 2', stove: 'Stove', green: 'Greenhouse', sink: 'Sink' };
   const ROOM_OF = { storA: 'A', storB: 'B' };
 
-  // Action spaces by player count (3-player = 4-player symbols covered). Seats: 6, minus reserved tables.
+  function pc(n) { return Math.max(2, Math.min(4, n)); }
+  // Action spaces by player count (3 players: the 4-player spaces are covered). Seats: 6 minus reserved tables.
   function layout(n) {
-    const p = Math.max(2, Math.min(4, n));
-    return {
-      reserved: { 2: 2, 3: 1, 4: 0 }[p],
-      dining: { 2: 3, 3: 4, 4: 5 }[p],
-      stove: { 2: 4, 3: 5, 4: 6 }[p],
-    };
+    const p = pc(n);
+    return { reserved: { 2: 2, 3: 1, 4: 0 }[p], dining: { 2: 3, 3: 4, 4: 5 }[p], stove: { 2: 4, 3: 5, 4: 6 }[p] };
+  }
+
+  function goalOf(scen, n, challenge) {
+    const p = pc(n);
+    if (scen === 1) return { kind: 'each', n: 2 };
+    if (scen === 2) return { kind: 'meals', n: { 2: 5, 3: 8, 4: 10 }[p] };
+    return { kind: 'coins', n: (challenge ? { 2: 22, 3: 34, 4: 46 } : { 2: 16, 3: 25, 4: 32 })[p] };
   }
 
   function shuffle(a) {
@@ -376,30 +478,59 @@ safe-buffer/index.js:
     }
     return a;
   }
+  const fill = (keys, v) => keys.reduce((o, k) => (o[k] = v, o), {});
 
   function newGame(settings, players) {
+    const st = Object.assign({ scenario: 1, workerSec: 30, shiftSec: 270, strict: false, challenge: false }, settings || {});
+    st.scenario = SCEN[st.scenario] ? +st.scenario : 1;
+    const cfg = SCEN[st.scenario];
     const L = layout(players.length);
+    const p = pc(players.length);
     const seats = [];
     for (let i = 0; i < 6; i++) seats.push({ dish: null, reserved: i >= 6 - L.reserved });
+
+    let room, cupboard, dirty = { S: 0, M: 0, L: 0, XL: 0 }, bag = null;
+    if (st.scenario === 1) {
+      room = () => ({ cheese: 4, meat: 3, bread: 2, salad: 2, veg: 2, pasta: 1 });
+      cupboard = { S: 2, M: 4, L: 1, XL: 1 };
+    } else {
+      const a = { 2: 4, 3: 5, 4: 6 }[p], b = { 2: 6, 3: 7, 4: 8 }[p];
+      room = () => ({ cheese: a, meat: b, bread: a, salad: a, veg: b, pasta: a });
+      bag = fill(SPICES, { 2: 3, 3: 4, 4: 5 }[p]);
+      if (st.scenario === 2) {
+        const m = { 2: 3, 3: 4, 4: 5 }[p];
+        cupboard = { S: m, M: m, L: m, XL: { 2: 2, 3: 2, 4: 3 }[p] };
+      } else {
+        cupboard = { S: 1, M: 1, L: 1, XL: 1 };
+        const d = { 2: 2, 3: 3, 4: 4 }[p];
+        dirty = { S: d, M: d, L: d, XL: { 2: 1, 3: 1, 4: 2 }[p] };
+      }
+    }
+    const spaces = {
+      reception: [null],
+      dining: Array(L.dining).fill(null),
+      storA: [null, null],
+      storB: [null, null],
+      stove: Array(L.stove).fill(null),
+    };
+    if (cfg.spices) spaces.green = [null, null];
+    if (cfg.sink) spaces.sink = [null, null];
+
     const s = {
-      v: 1,
+      v: 2,
       phase: 'ready',
-      settings: Object.assign({ workerSec: 30, shiftSec: 270, strict: false }, settings || {}),
-      players: players.map(p => ({ id: p.id, name: p.name, color: p.color })),
-      deck: shuffle(FRIENDS.slice()),
+      settings: st,
+      goal: goalOf(st.scenario, players.length, st.challenge),
+      players: players.map(x => ({ id: x.id, name: x.name, color: x.color })),
+      deck: shuffle(st.scenario === 1 ? FRIENDS.slice() : FRIENDS.concat(REGULARS)),
       seats,
-      spaces: {
-        reception: [null],
-        dining: Array(L.dining).fill(null),
-        storA: [null, null],
-        storB: [null, null],
-        stove: Array(L.stove).fill(null),
-      },
-      storage: {
-        A: { cheese: 4, meat: 3, bread: 2, salad: 2, veg: 2, pasta: 1 },
-        B: { cheese: 4, meat: 3, bread: 2, salad: 2, veg: 2, pasta: 1 },
-      },
-      cupboard: { S: 2, M: 4, L: 1, XL: 1 },
+      spaces,
+      storage: { A: room(), B: room() },
+      bag,
+      cupboard,
+      dirty,
+      coins: cfg.money ? 2 : 0,
+      drinkCoins: 0,
       orders: [],
       workers: {},
       open: {},
@@ -412,61 +543,95 @@ safe-buffer/index.js:
       goalAt: null,
       results: null,
     };
-    s.players.forEach(p => { s.stats[p.id] = { actions: 0, byArea: {}, returned: 0 }; });
-    seatPatrons(s, 2);
+    s.players.forEach(x => { s.workers[x.id] = Array(cfg.timers).fill(null); s.stats[x.id] = { actions: 0, byArea: {}, returned: 0, thrown: 0 }; });
+    seatPatrons(s, 2, true);
     return s;
   }
 
-  function seatPatrons(s, max) {
+  const cfgOf = s => SCEN[s.settings.scenario] || SCEN[1];
+
+  function seatPatrons(s, max, setup) {
     let n = 0;
     for (let i = 0; i < s.seats.length && n < max && s.deck.length; i++) {
       const seat = s.seats[i];
       if (!seat.reserved && !seat.dish) { seat.dish = s.deck.pop(); n++; }
     }
+    if (!setup && cfgOf(s).money) { s.coins += n; s.drinkCoins += n; } // every new guest buys a drink
     return n;
   }
 
-  function workerReady(s, pid, now) {
-    const w = s.workers[pid];
-    return !w || now >= w.start + s.settings.workerSec * 1000;
-  }
+  // ---- timers ----
+  const timerReady = (s, w, now) => !w || now >= w.start + s.settings.workerSec * 1000;
+  function workerReady(s, pid, now) { return (s.workers[pid] || []).some(w => timerReady(s, w, now)); }
   function workerLeft(s, pid, now) {
-    const w = s.workers[pid];
-    if (!w) return 0;
-    return Math.max(0, w.start + s.settings.workerSec * 1000 - now);
+    const ws = s.workers[pid] || [];
+    if (ws.some(w => timerReady(s, w, now))) return 0;
+    return Math.min.apply(null, ws.map(w => w.start + s.settings.workerSec * 1000 - now));
+  }
+  // Which of the player's timers moves when they tap a space.
+  function pickTimer(s, pid, area, idx, now) {
+    const ws = s.workers[pid];
+    const same = ws.findIndex(w => w && w.area === area && w.idx === idx);
+    if (same >= 0 && timerReady(s, ws[same], now)) return same;
+    const free = ws.findIndex(w => !w);
+    if (free >= 0) return free;
+    let best = -1;
+    ws.forEach((w, i) => { if (timerReady(s, w, now) && (best < 0 || w.start < ws[best].start)) best = i; });
+    return best;
   }
 
-  function checkOrder(o) {
+  // ---- checking meals ----
+  function plateOk(s, o) {
+    const d = DISHES[o.dish];
+    if (!o.plate) return false;
+    if (o.plate === d.plate) return true;
+    return cfgOf(s).bigger && PLATES.indexOf(o.plate) === PLATES.indexOf(d.plate) + 1;
+  }
+  function checkOrder(s, o) {
     const d = DISHES[o.dish];
     const r = [];
     if (!o.plate) r.push('no plate');
-    else if (o.plate !== d.plate) r.push(`wrong plate: ${PLATE_NAME[o.plate].toLowerCase()} instead of ${PLATE_NAME[d.plate].toLowerCase()}`);
+    else if (!plateOk(s, o)) r.push(`wrong plate: ${PLATE_NAME[o.plate].toLowerCase()} instead of ${PLATE_NAME[d.plate].toLowerCase()}`);
     ING.forEach(i => {
       const have = o.ing[i] || 0, need = d.ing[i] || 0;
       if (have < need) r.push(`missing ${need - have}× ${ING_INFO[i].n.toLowerCase()}`);
       if (have > need) r.push(`${have - need}× ${ING_INFO[i].n.toLowerCase()} too many`);
     });
+    SPICES.forEach(i => {
+      const have = (o.sp || {})[i] || 0, need = d.sp[i] || 0;
+      if (have < need) r.push(`missing ${need - have}× ${SP_INFO[i].n.toLowerCase()}`);
+      if (have > need) r.push(`${have - need}× ${SP_INFO[i].n.toLowerCase()} too many`);
+    });
     if (o.row < d.cook) r.push(`undercooked: ${o.row} of ${d.cook}`);
     else if (o.row > d.cook) r.push(`overcooked: ${o.row} instead of ${d.cook}`);
     return r;
   }
+  const needsIng = (o, i) => (o.ing[i] || 0) < (DISHES[o.dish].ing[i] || 0);
+  const needsSp = (o, i) => ((o.sp || {})[i] || 0) < (DISHES[o.dish].sp[i] || 0);
+  const ingComplete = o => ING.every(i => (o.ing[i] || 0) === (DISHES[o.dish].ing[i] || 0));
 
-  function needsIng(o, ing) {
-    return (o.ing[ing] || 0) < (DISHES[o.dish].ing[ing] || 0);
-  }
-  function ingComplete(o) {
-    return ING.every(i => (o.ing[i] || 0) === (DISHES[o.dish].ing[i] || 0));
+  // Where the team stands if the shift ended now (used for "goal reached at").
+  function tally(s) {
+    const per = s.players.map(p => {
+      const orders = s.orders.filter(o => o.pid === p.id).map(o => {
+        const reasons = checkOrder(s, o);
+        return { dish: o.dish, ok: reasons.length === 0, reasons };
+      });
+      return { id: p.id, name: p.name, color: p.color, served: orders.filter(o => o.ok).length, orders, stats: s.stats[p.id] };
+    });
+    const served = per.reduce((a, x) => a + x.served, 0);
+    const mealCoins = s.orders.filter(o => checkOrder(s, o).length === 0).reduce((a, o) => a + DISHES[o.dish].c, 0);
+    const freeDrinks = s.orders.length - served;
+    const coins = cfgOf(s).money ? Math.max(0, s.coins + mealCoins - freeDrinks) : 0;
+    const g = s.goal;
+    const win = g.kind === 'each' ? per.every(x => x.served >= g.n) : g.kind === 'meals' ? served >= g.n : coins >= g.n;
+    return { per, served, mealCoins, freeDrinks, coins, win };
   }
 
-  function goalMet(s) {
-    return s.players.every(p => s.orders.filter(o => o.pid === p.id && checkOrder(o).length === 0).length >= GOAL_PER_PLAYER);
-  }
-
-  function inShift(s, now) { return s.phase === 'play' && now >= s.shiftStart && now < s.shiftEnd; }
-  function canFinish(s, now) { return (s.phase === 'play' && now >= s.shiftStart) || s.phase === 'grace'; }
+  function inPlay(s, now) { return (s.phase === 'play' && now >= s.shiftStart) || s.phase === 'grace'; }
 
   function stat(s, pid, area) {
-    const st = s.stats[pid] || (s.stats[pid] = { actions: 0, byArea: {}, returned: 0 });
+    const st = s.stats[pid];
     st.actions++;
     st.byArea[area] = (st.byArea[area] || 0) + 1;
   }
@@ -478,21 +643,22 @@ safe-buffer/index.js:
     return o;
   }
 
+  const HOST_ONLY = ['start', 'endNow'];
+
   // Returns null on success, or an error message. Mutates s.
   function apply(s, a, now) {
     try {
       doApply(s, a, now);
-      if (s.phase === 'play' && s.goalAt == null && now >= s.shiftStart && goalMet(s)) s.goalAt = now - s.shiftStart;
+      if (s.phase === 'play' && s.goalAt == null && now >= s.shiftStart && tally(s).win) s.goalAt = now - s.shiftStart;
       return null;
     } catch (e) {
       return e.message;
     }
   }
 
-  const HOST_ONLY = ['start', 'endNow'];
-
   function doApply(s, a, now) {
     const pid = a.pid;
+    const cfg = cfgOf(s);
     const strict = !!s.settings.strict;
     if (!HOST_ONLY.includes(a.type) && !s.players.some(p => p.id === pid)) throw new Error('You are watching this round.');
     switch (a.type) {
@@ -511,12 +677,18 @@ safe-buffer/index.js:
         if (!slots || a.idx < 0 || a.idx >= slots.length) throw new Error('No such space.');
         const occ = slots[a.idx];
         if (occ && occ.pid !== pid) throw new Error('Someone else is working there.');
-        if (!workerReady(s, pid, now)) throw new Error(`Your timer is still running (${Math.ceil(workerLeft(s, pid, now) / 1000)} s).`);
-        const w = s.workers[pid];
+        if (occ && !timerReady(s, s.workers[pid][occ.t], now)) throw new Error('Your timer is still running here.');
+        if (!workerReady(s, pid, now)) {
+          const n = s.workers[pid].length;
+          throw new Error(`${n > 1 ? 'Both your timers are' : 'Your timer is'} still running (${Math.ceil(workerLeft(s, pid, now) / 1000)} s).`);
+        }
+        const t = pickTimer(s, pid, a.area, a.idx, now);
+        const w = s.workers[pid][t];
         if (w) s.spaces[w.area][w.idx] = null;
-        slots[a.idx] = { pid, start: now };
-        s.workers[pid] = { area: a.area, idx: a.idx, start: now };
+        slots[a.idx] = { pid, t, start: now };
+        s.workers[pid][t] = { area: a.area, idx: a.idx, start: now };
         stat(s, pid, a.area);
+        // Starting a new action ends the one before it.
         if (a.area === 'reception') {
           const empty = s.seats.filter(x => !x.reserved && !x.dish).length;
           const n = seatPatrons(s, 2);
@@ -524,56 +696,65 @@ safe-buffer/index.js:
           if (!n) s.errs[pid] = { msg: empty ? 'No more guests are waiting outside.' : 'All tables are full.', t: now, info: true };
         } else if (a.area === 'dining') s.open[pid] = { type: 'order' };
         else if (a.area === 'stove') s.open[pid] = { type: 'cook' };
+        else if (a.area === 'green') s.open[pid] = { type: 'spice' };
+        else if (a.area === 'sink') s.open[pid] = { type: 'wash', left: 3 };
         else s.open[pid] = { type: 'storage', room: ROOM_OF[a.area] };
-        return;
-      }
-      case 'lift': {
-        const w = s.workers[pid];
-        if (!w) return;
-        if (!workerReady(s, pid, now)) throw new Error('The sand is still running.');
-        s.spaces[w.area][w.idx] = null;
-        delete s.workers[pid];
         return;
       }
       case 'done': { s.open[pid] = null; return; }
       case 'takeOrder': {
-        if (!canFinish(s, now)) throw new Error('The shift is not running.');
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
         const op = s.open[pid];
-        if (!op || op.type !== 'order') throw new Error('Put your timer in the dining room first.');
+        if (!op || op.type !== 'order') throw new Error('Put a timer in the dining room first.');
         const seat = s.seats[a.seat];
         if (!seat || !seat.dish) throw new Error('Nobody sits there.');
-        const o = { id: s.nextOrder++, pid, dish: seat.dish, plate: null, ing: {}, src: [], row: 0 };
-        s.orders.push(o);
+        s.orders.push({ id: s.nextOrder++, pid, dish: seat.dish, plate: null, ing: {}, sp: {}, src: [], row: 0 });
         seat.dish = null;
         s.open[pid] = null;
         return;
       }
       case 'takePlate': {
-        if (!canFinish(s, now)) throw new Error('The shift is not running.');
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
         const o = ownOrder(s, pid, a.order);
         if (o.plate) throw new Error('This meal already has a plate.');
-        if (!PLATES.includes(a.size) || !(s.cupboard[a.size] > 0)) throw new Error('No plates of that size left.');
-        if (strict && a.size !== DISHES[o.dish].plate) throw new Error(`Wrong plate — this meal needs a ${PLATE_NAME[DISHES[o.dish].plate].toLowerCase()} plate.`);
+        if (!PLATES.includes(a.size) || !(s.cupboard[a.size] > 0)) throw new Error(s.dirty[a.size] > 0 ? 'Those plates are dirty — wash them at the sink first.' : 'No plates of that size left.');
+        if (strict && !plateOk(s, Object.assign({}, o, { plate: a.size }))) {
+          const d = DISHES[o.dish];
+          throw new Error(`Wrong plate — this meal needs a ${PLATE_NAME[d.plate].toLowerCase()} plate${cfg.bigger && d.plate !== 'XL' ? ` (or one size bigger)` : ''}.`);
+        }
         s.cupboard[a.size]--;
         o.plate = a.size;
         return;
       }
       case 'takeIng': {
-        if (!canFinish(s, now)) throw new Error('The shift is not running.');
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
         const op = s.open[pid];
-        if (!op || op.type !== 'storage') throw new Error('Put your timer in a storage room first.');
+        if (!op || op.type !== 'storage') throw new Error('Put a timer in a storage room first.');
         const room = s.storage[op.room];
         if (!ING.includes(a.ing) || !(room[a.ing] > 0)) throw new Error('None left in this storage room.');
         const o = ownOrder(s, pid, a.order);
+        if (!cfg.fix && o.row > 0) throw new Error('This meal is already cooking — no more ingredients.');
         if (strict && !needsIng(o, a.ing)) throw new Error(`${DISHES[o.dish].name} doesn't need more ${ING_INFO[a.ing].n.toLowerCase()}.`);
         room[a.ing]--;
         o.ing[a.ing] = (o.ing[a.ing] || 0) + 1;
         o.src.push({ ing: a.ing, room: op.room });
         return;
       }
+      case 'takeSpice': {
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
+        const op = s.open[pid];
+        if (!op || op.type !== 'spice') throw new Error('Put a timer in the greenhouse first.');
+        if (!SPICES.includes(a.spice) || !(s.bag[a.spice] > 0)) throw new Error('That spice has run out.');
+        const o = ownOrder(s, pid, a.order);
+        if (strict && !needsSp(o, a.spice)) throw new Error(`${DISHES[o.dish].name} doesn't need more ${SP_INFO[a.spice].n.toLowerCase()}.`);
+        s.bag[a.spice]--;
+        o.sp[a.spice] = (o.sp[a.spice] || 0) + 1;
+        return;
+      }
       case 'returnIng': {
-        // Scenario 1 leniency: wrong ingredients may be put back at any time.
-        if (!canFinish(s, now)) throw new Error('The shift is not running.');
+        // Scenario 1 only: wrong ingredients may be put back at any time.
+        if (!cfg.fix) throw new Error('From now on, mistakes can\'t be put back.');
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
         const o = ownOrder(s, pid, a.order);
         if (!(o.ing[a.ing] > 0)) throw new Error('Not on this plate.');
         o.ing[a.ing]--;
@@ -585,19 +766,40 @@ safe-buffer/index.js:
         s.stats[pid].returned++;
         return;
       }
+      case 'discard': {
+        // Scenario 3+: a botched meal goes in the bin, its plate into the sink, and the guest waits for a new one.
+        if (!cfg.discard) throw new Error('Not possible in this scenario.');
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
+        const o = ownOrder(s, pid, a.order);
+        if (o.plate) s.dirty[o.plate]++;
+        o.plate = null; o.ing = {}; o.sp = {}; o.src = []; o.row = 0;
+        s.stats[pid].thrown++;
+        return;
+      }
       case 'cook': {
-        if (!canFinish(s, now)) throw new Error('The shift is not running.');
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
         const op = s.open[pid];
-        if (!op || op.type !== 'cook') throw new Error('Put your timer on the stove first.');
+        if (!op || op.type !== 'cook') throw new Error('Put a timer on the stove first.');
         const o = ownOrder(s, pid, a.order);
         const d = DISHES[o.dish];
         if (strict) {
-          if (o.plate !== d.plate) throw new Error('Get the right plate before cooking.');
+          if (!plateOk(s, o)) throw new Error('Get the right plate before cooking.');
           if (!ingComplete(o)) throw new Error('Get all the ingredients before cooking.');
           if (o.row >= d.cook) throw new Error(d.cook === 0 ? `${d.name} is served raw — no cooking.` : `${d.name} is done — don't overcook it.`);
         } else if (o.row >= MAX_ROW) throw new Error('It can\'t cook any longer.');
         o.row++;
         s.open[pid] = null;
+        return;
+      }
+      case 'wash': {
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
+        const op = s.open[pid];
+        if (!op || op.type !== 'wash') throw new Error('Put a timer at the sink first.');
+        if (!PLATES.includes(a.size) || !(s.dirty[a.size] > 0)) throw new Error('No dirty plates of that size.');
+        s.dirty[a.size]--;
+        s.cupboard[a.size]++;
+        op.left--;
+        if (op.left <= 0 || !PLATES.some(x => s.dirty[x] > 0)) s.open[pid] = null;
         return;
       }
       case 'endNow': {
@@ -625,28 +827,27 @@ safe-buffer/index.js:
   }
 
   function finish(s, now) {
-    const per = s.players.map(p => {
-      const orders = s.orders.filter(o => o.pid === p.id).map(o => {
-        const reasons = checkOrder(o);
-        return { dish: o.dish, ok: reasons.length === 0, reasons };
-      });
-      return { id: p.id, name: p.name, color: p.color, served: orders.filter(o => o.ok).length, orders, stats: s.stats[p.id] };
-    });
+    const T = tally(s);
     s.open = {};
     s.phase = 'results';
     s.results = {
       at: now,
-      win: per.every(x => x.served >= GOAL_PER_PLAYER),
-      served: per.reduce((a, x) => a + x.served, 0),
+      scenario: s.settings.scenario,
+      goal: s.goal,
+      win: T.win,
+      served: T.served,
+      coins: T.coins,
+      money: cfgOf(s).money ? { start: 2, drinks: s.drinkCoins, meals: T.mealCoins, freeDrinks: T.freeDrinks } : null,
       goalAt: s.goalAt,
       usedMs: Math.min(now, s.shiftEnd) - s.shiftStart,
-      per,
+      per: T.per,
     };
   }
 
   root.Engine = {
-    ING, ING_INFO, PLATES, PLATE_NAME, DISHES, FRIENDS, MAX_ROW, GOAL_PER_PLAYER, AREAS, AREA_NAME, ROOM_OF,
-    HOST_ONLY, layout, newGame, apply, tick, finish, checkOrder, needsIng, ingComplete, goalMet, workerReady, workerLeft,
+    ING, ING_INFO, SPICES, SP_INFO, PLATES, PLATE_NAME, DISHES, FRIENDS, REGULARS, MAX_ROW, SCEN, AREA_NAME, ROOM_OF, HOST_ONLY,
+    layout, goalOf, newGame, apply, tick, finish, checkOrder, plateOk, needsIng, needsSp, ingComplete, tally,
+    workerReady, workerLeft, timerReady, cfgOf,
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -839,10 +1040,13 @@ safe-buffer/index.js:
 
   async function hostStart(resume) {
     role = 'host';
-    if (resume) { room = resume.room; wrap = resume.wrap; }
+    if (resume) {
+      room = resume.room; wrap = resume.wrap;
+      if (wrap.game && wrap.game.v !== 2) wrap.game = null; // saved by an older version of the game
+    }
     else {
       room = newRoomCode();
-      wrap = { room, rev: 1, lobby: { players: [{ id: me.pid, name: me.name, color: me.color }], settings: { workerSec: 30, shiftSec: 270, strict: false } }, game: null };
+      wrap = { room, rev: 1, lobby: { players: [{ id: me.pid, name: me.name, color: me.color }], settings: { scenario: 1, workerSec: 30, shiftSec: 270, strict: false, challenge: false } }, game: null };
     }
     ui.screen = 'game';
     saveHost();
@@ -998,6 +1202,8 @@ safe-buffer/index.js:
     log.push({
       at: new Date().toISOString(),
       room,
+      scenario: g.settings.scenario,
+      coins: g.results.coins,
       settings: g.settings,
       win: g.results.win,
       served: g.results.served,
@@ -1025,9 +1231,15 @@ safe-buffer/index.js:
   }).join('');
   const dot = color => `<i class="dot" style="background:${COLORS[color]}"></i>`;
 
+  const spIcons = (d, o) => E.SPICES.filter(i => d.sp[i]).map(i => {
+    const have = o ? ((o.sp || {})[i] || 0) : 0;
+    return Array.from({ length: d.sp[i] }, (_, k) => `<span class="ni sp ${o && k < have ? 'got' : ''}">${E.SP_INFO[i].e}</span>`).join('');
+  }).join('');
+  const coin = n => `<span class="coin" title="pays ${n} coins">🪙${n}</span>`;
+
   function spot(g, area, idx) {
     const occ = g.spaces[area][idx];
-    const icons = { reception: '🚪', dining: '📝', storA: '📦', storB: '📦', stove: '🔥' };
+    const icons = { reception: '🚪', dining: '📝', storA: '📦', storB: '📦', stove: '🔥', green: '🌿', sink: '🧽' };
     const label = `${E.AREA_NAME[area]}`;
     if (!occ) return `<button class="spot" data-a="place" data-area="${area}" data-idx="${idx}" aria-label="${label}: free"><span>${icons[area]}</span></button>`;
     const p = playerOf(g, occ.pid) || { name: '?', color: 'red' };
@@ -1035,15 +1247,18 @@ safe-buffer/index.js:
     return `<button class="spot taken ${mine ? 'mine' : ''}" style="--c:${COLORS[p.color]}" data-a="place" data-area="${area}" data-idx="${idx}" data-wstart="${occ.start}" aria-label="${label}: ${esc(p.name)}"><span class="ini">${esc(p.name.slice(0, 1).toUpperCase())}</span><em class="sec"></em></button>`;
   }
 
-  function miniTicket(dishId) {
+  function miniTicket(g, dishId) {
     const d = E.DISHES[dishId];
-    return `<span class="mt-e">${d.e}</span><span class="mt-n">${d.name}</span><span class="mt-r">${plateBadge(d.plate)}<span class="mt-i">${ingRow(d.ing)}</span>${pot(d.cook)}</span>`;
+    const money = E.cfgOf(g).money;
+    return `<span class="mt-top"><span class="mt-e">${d.e}</span><span class="mt-n">${d.name}</span>${money ? coin(d.c) : ''}</span><span class="mt-r">${plateBadge(d.plate)}<span class="mt-i">${ingRow(d.ing)}${spIcons(d)}</span>${pot(d.cook)}</span>`;
   }
 
   function myOpen(g) { return g.open[me.pid] || null; }
+  const orderDone = (g, o) => E.plateOk(g, o) && E.ingComplete(o) && E.SPICES.every(i => ((o.sp || {})[i] || 0) === (E.DISHES[o.dish].sp[i] || 0));
 
   function ticket(g, o, mine) {
     const d = E.DISHES[o.dish];
+    const cfg = E.cfgOf(g);
     const op = mine ? myOpen(g) : null;
     const sel = mine && ui.sel === o.id;
     const cells = [];
@@ -1054,18 +1269,22 @@ safe-buffer/index.js:
     const placed = E.ING.flatMap(i => Array(o.ing[i] || 0).fill(i));
     const chips = placed.map(i => {
       const armed = ui.armed && ui.armed.order === o.id && ui.armed.ing === i;
-      return mine
+      return mine && cfg.fix
         ? `<button class="chip ${armed ? 'armed' : ''}" data-a="ret" data-order="${o.id}" data-ing="${i}" aria-label="${E.ING_INFO[i].n}">${E.ING_INFO[i].e}</button>`
         : `<span class="chip">${E.ING_INFO[i].e}</span>`;
-    }).join('');
-    const cookTxt = d.cook === 0 ? (o.row ? `Cooked ${o.row}× — salad needs no stove` : 'No cooking') : `Cooked ${o.row} of ${d.cook}`;
+    }).join('') + E.SPICES.flatMap(i => Array(((o.sp || {})[i]) || 0).fill(i)).map(i => `<span class="chip spc">${E.SP_INFO[i].e}</span>`).join('');
+    const cookTxt = d.cook === 0 ? (o.row ? `Cooked ${o.row}× — needs no stove` : 'No cooking') : `Cooked ${o.row} of ${d.cook}`;
     const canCook = op && op.type === 'cook';
-    const canFill = op && op.type === 'storage';
+    const canFill = op && (op.type === 'storage' || op.type === 'spice');
+    const armedBin = ui.armedBin && ui.armedBin.order === o.id && Date.now() - ui.armedBin.t < 4000;
+    const started = o.plate || placed.length || o.row || Object.keys(o.sp || {}).length;
+    const bin = mine && cfg.discard && started && (g.phase === 'play' || g.phase === 'grace')
+      ? `<button class="bin ${armedBin ? 'armed' : ''}" data-a="bin" data-order="${o.id}" aria-label="Throw this meal away">${armedBin ? 'Tap again to bin it' : '🗑️'}</button>` : '';
     return `<div class="ticket ${sel ? 'sel' : ''} ${canCook ? 'cookable' : ''}" ${mine ? `data-a="sel" data-order="${o.id}"` : ''}>
-      <div class="tk-head"><span class="tk-e">${d.e}</span><span class="tk-n">${d.name}</span>${sel && canFill ? '<span class="tk-tag">filling</span>' : ''}</div>
-      <div class="tk-need">${plateBadge(d.plate, o.plate === d.plate ? 'got' : '')}<span class="tk-i">${needIcons(d, o)}</span>${pot(d.cook)}</div>
+      <div class="tk-head"><span class="tk-e">${d.e}</span><span class="tk-n">${d.name}</span>${cfg.money ? coin(d.c) : ''}${sel && canFill ? '<span class="tk-tag">filling</span>' : ''}</div>
+      <div class="tk-need">${plateBadge(d.plate, E.plateOk(g, o) ? 'got' : '')}<span class="tk-i">${needIcons(d, o)}${spIcons(d, o)}</span>${pot(d.cook)}</div>
       <div class="tk-plate">${o.plate ? plateBadge(o.plate, 'big') : `<span class="noplate">${mine ? 'Take a plate from the cupboard' : 'no plate'}</span>`}<span class="chips">${chips}</span></div>
-      <div class="tk-cook"><span class="cells">${cells.join('')}</span><span class="ct">${cookTxt}</span></div>
+      <div class="tk-cook"><span class="cells">${cells.join('')}</span><span class="ct">${cookTxt}</span>${bin}</div>
       ${canCook ? `<button class="btn cookbtn" data-a="cook" data-order="${o.id}">Cook one step</button>` : ''}
     </div>`;
   }
@@ -1092,7 +1311,7 @@ safe-buffer/index.js:
           <div class="half">
             <h2>Join a game</h2>
             <p>Type the code from the host iPad.</p>
-            <input id="code" class="codein" maxlength="12" placeholder="MANGO42" autocapitalize="characters" autocomplete="off" value="${canRejoin ? esc(gsaved.room) : ''}">
+            <input id="code" class="codein" maxlength="12" placeholder="MANGO42" autocapitalize="characters" autocomplete="off" value="${esc(ui.code != null ? ui.code : canRejoin ? gsaved.room : '')}">
             <button class="btn big" data-a="join">Join</button>
           </div>
         </div>
@@ -1101,9 +1320,23 @@ safe-buffer/index.js:
     </main>`;
   }
 
+  const SCEN_BLURB = {
+    1: 'Seat friends, take orders, fetch ingredients, cook. One sand timer each.',
+    2: 'New: spices from the greenhouse, two sand timers each, and plates one size bigger are fine. Mistakes can no longer be put back.',
+    3: 'New: wash dirty plates at the sink and earn coins. Botched meals go in the bin.',
+  };
+
   function renderLobby() {
     const L = wrap.lobby, host = role === 'host', S = L.settings;
+    const scen = S.scenario || 1;
     const seg = (key, vals, labels) => `<div class="seg">${vals.map((v, i) => `<button class="${S[key] === v ? 'on' : ''}" ${host ? `data-a="set" data-k="${key}" data-v="${v}"` : 'disabled'}>${labels[i]}</button>`).join('')}</div>`;
+    const log = host ? LS.get('kc-log', []) : [];
+    const won = n => log.some(x => (x.scenario || 1) === n && x.win);
+    const normal = E.SCEN[scen].normal;
+    const shiftVals = (DEV ? [40] : []).concat([240, 270, 300, 360]);
+    const shiftLbl = v => fmt(v * 1000) + (v === normal ? ' normal' : v === 300 ? ' family' : '');
+    const goal = E.goalOf(scen, L.players.length, S.challenge);
+    const goalTxt = goal.kind === 'each' ? `every chef serves ${goal.n} meals` : goal.kind === 'meals' ? `serve ${goal.n} meals together` : `earn ${goal.n} coins together`;
     return `<main class="lobby">
       <h1 class="logo small">Küchen<span>-</span>Chaos</h1>
       <section class="card">
@@ -1112,45 +1345,66 @@ safe-buffer/index.js:
         <h2>Chefs (${L.players.length} of 4)</h2>
         <ul class="plist">${L.players.map(p => `<li>${dot(p.color)}<span>${esc(p.name || 'Chef')}</span>${p.id === me.pid ? '<em>you</em>' : ''}${host && p.id !== me.pid ? `<button class="x" data-a="kick" data-id="${p.id}" aria-label="Remove ${esc(p.name)}">✕</button>` : ''}</li>`).join('')}</ul>
         ${!L.players.some(p => p.id === me.pid) && !host ? '<p class="note">Joining…</p>' : ''}
+        <h2>Restaurant</h2>
+        <div class="scens">${[1, 2, 3].map(n => `<button class="scen ${scen === n ? 'on' : ''}" ${host ? `data-a="set" data-k="scenario" data-v="${n}"` : 'disabled'}><b>${n}. ${E.SCEN[n].name}${won(n) ? ' <span class="won">✓</span>' : ''}</b><small>${SCEN_BLURB[n]}</small></button>`).join('')}</div>
+        <p class="note">Goal: ${goalTxt}.</p>
         <h2>Settings</h2>
         <div class="setrow"><span>Sand timer</span>${DEV ? seg('workerSec', [3, 20, 25, 30, 35], ['3 s', '20 s', '25 s', '30 s', '35 s']) : seg('workerSec', [20, 25, 30, 35], ['20 s', '25 s', '30 s', '35 s'])}</div>
-        <div class="setrow"><span>Shift length</span>${DEV ? seg('shiftSec', [40, 240, 270, 300, 360], ['0:40', '4:00', '4:30 normal', '5:00 family', '6:00']) : seg('shiftSec', [240, 270, 300, 360], ['4:00', '4:30 normal', '5:00 family', '6:00'])}</div>
+        <div class="setrow"><span>Shift length</span>${seg('shiftSec', shiftVals, shiftVals.map(shiftLbl))}</div>
         <div class="setrow"><span>Wrong moves</span>${seg('strict', [false, true], ['Allowed, checked at the end', 'Blocked'])}</div>
+        ${scen === 3 ? `<div class="setrow"><span>Coin goal</span>${seg('challenge', [false, true], [`Normal (${E.goalOf(3, L.players.length, false).n})`, `Challenge (${E.goalOf(3, L.players.length, true).n})`])}</div>` : ''}
         ${host ? `<button class="btn big" data-a="newgame" ${L.players.length ? '' : 'disabled'}>Set the tables</button>` : '<p class="note">The host starts the game.</p>'}
       </section>
       <div class="lobbylinks"><button class="link" data-a="help">How to play</button><button class="link" data-a="leave">Leave</button></div>
     </main>`;
   }
 
+  function goalChip(g) {
+    const G = g.goal;
+    if (G.kind === 'coins') return `<div class="goalchip" title="Coins in the office">🪙 <b>${g.coins}</b><small>goal ${G.n}</small></div>`;
+    if (G.kind === 'meals') return `<div class="goalchip">🍽️ <small>goal ${G.n} meals</small></div>`;
+    return `<div class="goalchip">🍽️ <small>${G.n} meals each</small></div>`;
+  }
+
   function renderGame(g) {
+    const cfg = E.cfgOf(g);
     const meP = g.players.find(p => p.id === me.pid);
     const op = meP ? myOpen(g) : null;
     const now = hostNow();
     const myOrders = g.orders.filter(o => o.pid === me.pid);
     if (ui.sel && !myOrders.some(o => o.id === ui.sel)) ui.sel = null;
-    if (!ui.sel && myOrders.length) ui.sel = (myOrders.find(o => !E.ingComplete(o)) || myOrders[myOrders.length - 1]).id;
+    if (!ui.sel && myOrders.length) ui.sel = (myOrders.find(o => !orderDone(g, o)) || myOrders[myOrders.length - 1]).id;
     const selO = myOrders.find(o => o.id === ui.sel);
     const plateGlow = selO && !selO.plate;
 
     const seats = g.seats.map((s, i) => {
       if (s.reserved) return `<div class="seat reserved"><span>Reserved</span></div>`;
       if (!s.dish) return `<div class="seat empty"></div>`;
-      return `<button class="seat guest ${op && op.type === 'order' ? 'glow' : ''}" data-a="takeOrder" data-seat="${i}">${miniTicket(s.dish)}</button>`;
+      return `<button class="seat guest ${op && op.type === 'order' ? 'glow' : ''}" data-a="takeOrder" data-seat="${i}">${miniTicket(g, s.dish)}</button>`;
     }).join('');
 
     const room = (area, key, num) => {
       const active = op && op.type === 'storage' && op.room === key;
-      return `<section class="area store ${active ? 'active' : ''}">
-        <h3>Storage room ${num}</h3>
-        <div class="spots">${g.spaces[area].map((_, i) => spot(g, area, i)).join('')}</div>
+      return `<section class="area store st${num} ${active ? 'active' : ''}">
+        <div class="ahead"><h3>Storage ${num}</h3><div class="spots">${g.spaces[area].map((_, i) => spot(g, area, i)).join('')}</div></div>
         <div class="ings">${E.ING.map(i => `<button class="ing ${active && g.storage[key][i] ? 'glow' : ''}" data-a="takeIng" data-room="${key}" data-ing="${i}" ${g.storage[key][i] ? '' : 'disabled'} aria-label="${E.ING_INFO[i].n}"><span>${E.ING_INFO[i].e}</span><b>${g.storage[key][i]}</b></button>`).join('')}</div>
       </section>`;
     };
 
+    const greenActive = op && op.type === 'spice';
+    const green = cfg.spices ? `<section class="area green ${greenActive ? 'active' : ''}">
+        <div class="gh"><div class="ahead"><h3>Greenhouse</h3><div class="spots">${g.spaces.green.map((_, i) => spot(g, 'green', i)).join('')}</div></div>
+        <div class="spices">${E.SPICES.map(i => `<button class="ing spice ${greenActive && g.bag[i] ? 'glow' : ''}" data-a="takeSpice" data-spice="${i}" ${g.bag[i] ? '' : 'disabled'} aria-label="${E.SP_INFO[i].n}"><span>${E.SP_INFO[i].e}</span><b>${g.bag[i]}</b></button>`).join('')}</div></div></section>` : '';
+
+    const washActive = op && op.type === 'wash';
+    const sink = cfg.sink ? `<section class="area sink ${washActive ? 'active' : ''}">
+        <div class="gh"><div class="ahead"><h3>Sink${washActive ? ` <small>wash ${op.left}</small>` : ' <small>dirty</small>'}</h3><div class="spots">${g.spaces.sink.map((_, i) => spot(g, 'sink', i)).join('')}</div></div>
+        <div class="plates">${E.PLATES.map(sz => `<button class="pbtn dirty ${washActive && g.dirty[sz] ? 'glow' : ''}" data-a="wash" data-size="${sz}" ${g.dirty[sz] ? '' : 'disabled'}>${plateBadge(sz, 'dirtyp')}<b>×${g.dirty[sz]}</b></button>`).join('')}</div></div></section>` : '';
+
     const others = g.players.filter(p => p.id !== me.pid).map(p => {
       const os = g.orders.filter(o => o.pid === p.id);
-      const w = g.workers[p.id];
-      return `<div class="other" style="--c:${COLORS[p.color]}"><div class="oname">${dot(p.color)}${esc(p.name)} <small>${w ? E.AREA_NAME[w.area].toLowerCase() : 'not started'}</small></div>
+      const where = (g.workers[p.id] || []).filter(Boolean).map(w => E.AREA_NAME[w.area].toLowerCase());
+      return `<div class="other" style="--c:${COLORS[p.color]}"><div class="oname">${dot(p.color)}${esc(p.name)} <small>${where.length ? where.join(' · ') : 'not started'}</small></div>
         <div class="otks">${os.length ? os.map(o => ticket(g, o, false)).join('') : '<span class="none">No orders yet</span>'}</div></div>`;
     }).join('');
 
@@ -1158,44 +1412,53 @@ safe-buffer/index.js:
     const ready = meP && E.workerReady(g, me.pid, now);
     const noPlate = myOrders.find(o => !o.plate);
     const platePrompt = noPlate && (g.phase === 'play' || g.phase === 'grace') ? `<span class="hint">🍽️ Take a plate for your ${E.DISHES[noPlate.dish].name} from the cupboard.</span>` : '';
+    const nTimers = (g.workers[me.pid] || []).length;
     if (!meP) prompt = 'You are watching this round. You can play in the next one.';
-    else if (g.phase === 'ready') prompt = `Plan together. Every chef serves ${E.GOAL_PER_PLAYER} meals.`;
+    else if (g.phase === 'ready') prompt = 'Plan together before the shift starts.';
     else if (g.phase === 'results') { prompt = 'The shift is over.'; promptBtn = '<button class="btn" data-a="showResults">Results</button>'; }
     else if (op && op.type === 'order') { prompt = g.seats.some(s => s.dish) ? '📝 Tap a guest to take their order.' : '📝 Nobody is waiting for you to take their order.'; promptBtn = '<button class="btn ghost" data-a="done">Skip</button>'; }
     else if (op && op.type === 'storage') { prompt = selO ? `📦 Tap ingredients for your ${E.DISHES[selO.dish].name}.${myOrders.length > 1 ? ' Tap another ticket to fill that one.' : ''}` : '📦 Take an order first. Ingredients only go on your own plates.'; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
+    else if (op && op.type === 'spice') { prompt = selO ? `🌿 Tap spices for your ${E.DISHES[selO.dish].name}.${myOrders.length > 1 ? ' Tap another ticket to season that one.' : ''}` : '🌿 Take an order first. Spices only go on your own plates.'; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
+    else if (op && op.type === 'wash') { prompt = `🧽 Tap dirty plates in the sink to wash them (${op.left} more).`; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
     else if (op && op.type === 'cook') { prompt = myOrders.length ? '🔥 Tap “Cook one step” on a meal.' : '🔥 You have nothing to cook yet.'; promptBtn = '<button class="btn ghost" data-a="done">Skip</button>'; }
     else if (g.phase === 'grace') prompt = 'Time is up! Waiting for the others to finish.';
     else if (now < g.shiftStart) prompt = 'Get ready…';
-    else prompt = ready ? 'Your timer is free. Tap a circle.' : 'Your sand is running. Plan your next move.';
+    else prompt = ready ? (nTimers > 1 ? 'You have a free timer. Tap a circle.' : 'Your timer is free. Tap a circle.') : (nTimers > 1 ? 'Both timers are running. Plan your next move.' : 'Your sand is running. Plan your next move.');
     if (g.phase === 'grace' && op) prompt = 'Time is up! Finish this: ' + prompt;
     if (platePrompt && meP && g.phase !== 'results') prompt += platePrompt;
 
-    const w = meP && g.workers[me.pid];
+    const ws = meP ? g.workers[me.pid] : [];
     const myColor = meP ? COLORS[meP.color] : '#999';
+    const goOn = ready && g.phase === 'play' && now >= g.shiftStart && !op;
+    const glasses = ws.map(w => `<div class="glass ${w ? '' : 'free'} ${goOn && E.timerReady(g, w, now) ? 'go' : ''}" ${w ? `data-wstart="${w.start}"` : ''}><span class="hg">⏳</span><em class="sec"></em></div>`).join('');
     const status = meP ? `<div class="me" style="--c:${myColor}">
-        <div class="glass ${w ? '' : 'free'} ${ready && g.phase === 'play' && now >= g.shiftStart && !op ? 'go' : ''}" ${w ? `data-wstart="${w.start}"` : ''}><span class="hg">⏳</span><em class="sec"></em></div>
+        <div class="glasses n${ws.length}">${glasses}</div>
         <div class="prompt"><p id="prompt">${prompt}</p>${promptBtn}</div>
       </div>` : `<div class="me"><div class="prompt"><p>${prompt}</p></div></div>`;
 
     const clock = g.phase === 'ready' ? fmt(g.settings.shiftSec * 1000) : '';
+    const guestsLeft = g.deck.length;
 
     return `<div class="game phase-${g.phase} ${g.settings.strict ? 'strict' : ''}">
       <header class="bar">
         <div class="brand">Küchen<span>-</span>Chaos <small>${esc(wrap.room)}</small></div>
         <div class="clock" id="clock">${clock}</div>
+        ${goalChip(g)}
         <div class="who">${g.players.map(p => `<span class="pchip" style="--c:${COLORS[p.color]}" data-wpid="${p.id}">${esc(p.name)}</span>`).join('')}</div>
         <div class="net" id="net"></div>
         <button class="menu-b" data-a="menu" aria-label="Menu">☰</button>
       </header>
       <div class="main">
-        <div class="board">
-          <section class="area reception"><h3>Reception</h3><div class="spots">${spot(g, 'reception', 0)}</div>
-            <div class="queue"><div class="stack" style="--n:${Math.min(g.deck.length, 4)}"></div><p>${g.deck.length ? `${g.deck.length} friends waiting outside` : 'Nobody left outside'}</p></div></section>
+        <div class="board scen-${g.settings.scenario}">
+          <section class="area reception"><h3>Reception</h3><div class="rc"><div class="spots">${spot(g, 'reception', 0)}</div>
+            <div class="queue"><div class="stack" style="--n:${Math.min(guestsLeft, 4)}"></div><p>${guestsLeft ? `${guestsLeft} waiting` : 'Nobody outside'}</p></div></div></section>
           <section class="area dining"><h3>Dining room</h3><div class="seats">${seats}</div><div class="spots">${g.spaces.dining.map((_, i) => spot(g, 'dining', i)).join('')}</div></section>
+          ${green}
           ${room('storA', 'A', 1)}
           ${room('storB', 'B', 2)}
           <section class="area stove ${op && op.type === 'cook' ? 'active' : ''}"><h3>Stove</h3><div class="spots">${g.spaces.stove.map((_, i) => spot(g, 'stove', i)).join('')}</div></section>
           <section class="area cupboard ${plateGlow ? 'active' : ''}"><h3>Cupboard <small>free, any time</small></h3><div class="plates">${E.PLATES.map(sz => `<button class="pbtn ${plateGlow && g.cupboard[sz] ? 'glow' : ''}" data-a="plate" data-size="${sz}" ${g.cupboard[sz] ? '' : 'disabled'}>${plateBadge(sz, 'big')}<b>×${g.cupboard[sz]}</b></button>`).join('')}</div></section>
+          ${sink}
         </div>
         <aside class="kitchen">
           ${status}
@@ -1212,29 +1475,46 @@ safe-buffer/index.js:
   function renderReady(g) {
     const host = role === 'host';
     const hostP = wrap.lobby.players[0];
+    const n = g.settings.scenario, G = g.goal, t = fmt(g.settings.shiftSec * 1000);
+    const timers = E.SCEN[n].timers;
+    const goal = G.kind === 'each' ? `In ${t} every chef must serve ${G.n} meals correctly.`
+      : G.kind === 'meals' ? `In ${t} you must serve ${G.n} meals correctly together — it doesn't matter who cooks how many.`
+      : `In ${t} the team must earn ${G.n} coins. You start with 2. Every new guest buys a drink (+1). Served meals pay what their ticket shows. Every guest you took an order from but didn't serve gets a free drink (−1).`;
+    const extra = {
+      1: 'Seat friends, take their orders, grab the right plate, fetch ingredients and cook.',
+      2: 'New: spices come from the greenhouse 🌿 and can be added even while a meal cooks. A plate one size bigger is fine. Each chef now has two sand timers. Wrong ingredients can no longer be put back.',
+      3: 'New: most plates start dirty — wash up to 3 per visit at the sink 🧽. A botched meal can go in the bin 🗑️: its plate goes to the sink and the guest waits for a fresh one.',
+    }[n];
     return `<div class="sheet readysheet"><div class="card">
-      <h2>Your first restaurant</h2>
-      <p>Every chef has one sand timer of ${g.settings.workerSec} seconds. Seat friends, take their orders, grab the right plate, fetch ingredients and cook. In ${fmt(g.settings.shiftSec * 1000)} every chef must serve ${E.GOAL_PER_PLAYER} meals correctly.${g.settings.strict ? ' Wrong moves are blocked.' : ' Meals are checked when the time is up.'}</p>
+      <h2>${n}. ${E.SCEN[n].name}</h2>
+      <p>${extra} Each chef has ${timers === 1 ? 'one sand timer' : 'two sand timers'} of ${g.settings.workerSec} seconds. ${goal}${g.settings.strict ? ' Wrong moves are blocked.' : ' Meals are checked when the time is up.'}</p>
       ${host ? '<button class="btn big" data-a="startShift">Start the shift</button>' : `<p class="note">Waiting for ${esc(hostP ? hostP.name : 'the host')} to start the shift.</p>`}
       <button class="link" data-a="help">How to play</button>
     </div></div>`;
   }
 
   function renderResults(g) {
-    const R = g.results, host = role === 'host';
+    const R = g.results, host = role === 'host', G = R.goal || g.goal;
     const log = host ? LS.get('kc-log', []) : [];
-    const wins = log.filter(x => x.win && x.goalAt != null);
+    const wins = log.filter(x => (x.scenario || 1) === (R.scenario || 1) && x.win && x.goalAt != null);
     const best = wins.length ? Math.min.apply(null, wins.map(x => x.goalAt)) : null;
+    const head = R.win
+      ? (G.kind === 'coins' ? `${R.coins} coins — you made it!` : 'Every guest went home happy!')
+      : (G.kind === 'each' ? 'Not every chef served two meals.' : G.kind === 'meals' ? `${R.served} of ${G.n} meals served — not enough this time.` : `${R.coins} of ${G.n} coins — not enough this time.`);
+    const M = R.money;
+    const money = M ? `<p class="money">Start ${M.start} + drinks ${M.drinks} + meals ${M.meals} − free drinks ${M.freeDrinks} = <b>${R.coins} coins</b> (goal ${G.n})</p>` : '';
+    const per = p => G.kind === 'each' ? `${p.served} of ${G.n}` : `${p.served} served`;
     return `<div class="sheet"><div class="card results ${R.win ? 'won' : 'lost'}">
-      <h2>${R.win ? 'Every friend went home happy!' : 'Not every chef served two meals.'}</h2>
+      <h2>${head}</h2>
       <p class="sub">${R.served} meal${R.served === 1 ? '' : 's'} served correctly${R.goalAt != null ? ` · goal reached at ${fmt(R.goalAt)}` : ''}${best != null ? ` · best ever ${fmt(best)}` : ''}</p>
+      ${money}
       <div class="rgrid">${R.per.map(p => `<div class="rcol" style="--c:${COLORS[p.color]}">
-        <h3>${dot(p.color)}${esc(p.name)} <span>${p.served} of ${E.GOAL_PER_PLAYER}</span></h3>
-        ${p.orders.length ? p.orders.map(o => `<div class="rrow ${o.ok ? 'ok' : 'bad'}"><span class="re">${E.DISHES[o.dish].e}</span><div><b>${E.DISHES[o.dish].name}</b>${o.ok ? '<small>served</small>' : `<small>${o.reasons.map(esc).join(' · ')}</small>`}</div><span class="mark">${o.ok ? '✓' : '✗'}</span></div>`).join('') : '<p class="none">No orders taken</p>'}
-        <p class="acts">${p.stats ? p.stats.actions : 0} actions</p>
+        <h3>${dot(p.color)}${esc(p.name)} <span>${per(p)}</span></h3>
+        ${p.orders.length ? p.orders.map(o => `<div class="rrow ${o.ok ? 'ok' : 'bad'}"><span class="re">${E.DISHES[o.dish].e}</span><div><b>${E.DISHES[o.dish].name}</b>${o.ok ? `<small>served${M ? ` · +${E.DISHES[o.dish].c} coins` : ''}</small>` : `<small>${o.reasons.map(esc).join(' · ')}</small>`}</div><span class="mark">${o.ok ? '✓' : '✗'}</span></div>`).join('') : '<p class="none">No orders taken</p>'}
+        <p class="acts">${p.stats ? p.stats.actions : 0} actions${p.stats && p.stats.thrown ? ` · ${p.stats.thrown} binned` : ''}</p>
       </div>`).join('')}</div>
       <div class="rbtns">
-        ${host ? '<button class="btn big" data-a="again">Play again</button><button class="btn ghost" data-a="lobby">Change chefs or settings</button><button class="btn ghost" data-a="log">Download game log</button>' : '<p class="note">The host can start the next round.</p>'}
+        ${host ? '<button class="btn big" data-a="again">Play again</button><button class="btn ghost" data-a="lobby">Change restaurant or chefs</button><button class="btn ghost" data-a="log">Download game log</button>' : '<p class="note">The host can start the next round.</p>'}
         <button class="link" data-a="hideResults">Look at the board</button>
       </div>
     </div></div>`;
@@ -1243,15 +1523,17 @@ safe-buffer/index.js:
   function renderHelp() {
     return `<div class="sheet" data-a="closeHelp"><div class="card help" data-stop="1">
       <h2>How to play</h2>
-      <p>Everyone plays at the same time. You have one sand timer. Tap a free circle to put your timer there and do that action straight away. The circle stays blocked until your sand has run out and you move your timer somewhere else.</p>
+      <p>Everyone plays at the same time. Tap a free circle to put a sand timer there and do that action straight away. The circle stays blocked until the sand has run out and the timer moves somewhere else.</p>
       <ul>
-        <li><b>🚪 Reception</b> seats up to 2 new friends at free tables.</li>
-        <li><b>📝 Dining room</b> lets you take one friend's order. The ticket shows the plate size, the ingredients and how often it must cook. Then tap the right plate in the cupboard — plates are free and you can take one any time.</li>
-        <li><b>📦 Storage room</b> lets you put ingredients on your own plates. Take all you need from that room, then tap Done. If something is missing, use the other storage room.</li>
+        <li><b>🚪 Reception</b> seats up to 2 new guests at free tables.</li>
+        <li><b>📝 Dining room</b> lets you take one guest's order. The ticket shows the plate size, the ingredients, the spices and how often it must cook. Then tap the plate in the cupboard — plates are free and you can take one any time.</li>
+        <li><b>📦 Storage room</b> puts ingredients on your own plates. Take all you need from that room, then tap Done.</li>
         <li><b>🔥 Stove</b> cooks one meal one step. 🍳2 means two stove visits. Too many visits overcook it.</li>
+        <li><b>🌿 Greenhouse</b> (from restaurant 2) puts spices on your plates — even on a meal that is already cooking.</li>
+        <li><b>🧽 Sink</b> (from restaurant 3) washes up to 3 dirty plates.</li>
       </ul>
-      <p>Goal: before the time runs out, every chef serves 2 meals with the right plate, exactly the right ingredients, and the right cooking. Meals are checked at the end. When time is up you may finish the action you already started.</p>
-      <p>This first restaurant forgives one kind of mistake: tap a wrong ingredient on your ticket twice to put it back.</p>
+      <p>Meals are checked when the time is up: right plate (from restaurant 2, one size bigger is fine), exactly the right ingredients and spices, and the right cooking. When time is up you may finish the action you already started.</p>
+      <p>Restaurant 1 forgives mistakes: tap a wrong ingredient twice to put it back. From restaurant 2 on, two sand timers each, and no putting back. From restaurant 3 on, you can bin a botched meal 🗑️ and start it again.</p>
       <button class="btn" data-a="closeHelp">Got it</button>
     </div></div>`;
   }
@@ -1323,8 +1605,8 @@ safe-buffer/index.js:
         const s = el.querySelector('.sec'); if (s) s.textContent = left ? Math.ceil(left / 1000) : '';
       });
       document.querySelectorAll('[data-wpid]').forEach(el => {
-        const w = g.workers[el.dataset.wpid];
-        const left = w ? Math.max(0, w.start + dur - now) : 0;
+        const ws = (g.workers[el.dataset.wpid] || []).filter(Boolean);
+        const left = ws.length ? Math.max.apply(null, ws.map(w => Math.max(0, w.start + dur - now))) : 0;
         el.style.setProperty('--p', (left / dur).toFixed(3));
       });
       const clock = document.getElementById('clock');
@@ -1339,11 +1621,11 @@ safe-buffer/index.js:
       } else if (clock && g.phase !== 'ready') clock.textContent = g.phase === 'grace' ? 'Time!' : 'Done';
       const meP = g.players.some(p => p.id === me.pid);
       if (!once && meP && g.phase === 'play') {
-        const ready = E.workerReady(g, me.pid, now);
+        const nReady = (g.workers[me.pid] || []).filter(w => w && E.timerReady(g, w, now)).length;
         const started = now >= g.shiftStart;
-        const key = ready + '|' + started;
+        const key = nReady + '|' + started;
         if (lastReady !== null && lastReady !== key) {
-          if (ready && g.workers[me.pid] && lastReady.startsWith('false')) SFX.ready();
+          if (nReady > +lastReady.split('|')[0]) SFX.ready();
           lastReady = key;
           render();
           requestAnimationFrame(() => frame(false));
@@ -1362,6 +1644,7 @@ safe-buffer/index.js:
 
   app.addEventListener('input', e => {
     if (e.target.id === 'nm') { me.name = e.target.value.trim(); saveMe(); }
+    if (e.target.id === 'code') ui.code = e.target.value; // keep what was typed if the screen redraws
   });
   app.addEventListener('keydown', e => {
     if (e.key === 'Enter' && e.target.id === 'code') {
@@ -1401,8 +1684,10 @@ safe-buffer/index.js:
       case 'set': {
         if (role !== 'host') return;
         const k = t.dataset.k; let v = t.dataset.v;
-        v = k === 'strict' ? v === 'true' : +v;
-        wrap.lobby.settings[k] = v; changed(); break;
+        v = (k === 'strict' || k === 'challenge') ? v === 'true' : +v;
+        wrap.lobby.settings[k] = v;
+        if (k === 'scenario') wrap.lobby.settings.shiftSec = E.SCEN[v].normal;
+        changed(); break;
       }
       case 'kick': wrap.lobby.players = wrap.lobby.players.filter(p => p.id !== t.dataset.id); changed(); break;
       case 'newgame': case 'again':
@@ -1443,6 +1728,30 @@ safe-buffer/index.js:
         break;
       }
       case 'sel': ui.sel = +t.dataset.order; render(); break;
+      case 'takeSpice': {
+        if (!g) return;
+        const op = myOpen(g);
+        if (!op || op.type !== 'spice') { toast('Put a timer in the greenhouse first.', 'err'); return; }
+        if (!ui.sel) { toast('Take an order first — spices only go on your own plates.', 'err'); return; }
+        act({ type: 'takeSpice', order: ui.sel, spice: t.dataset.spice });
+        break;
+      }
+      case 'wash': {
+        if (!g) return;
+        const op = myOpen(g);
+        if (!op || op.type !== 'wash') { toast('Put a timer at the sink first.', 'err'); return; }
+        act({ type: 'wash', size: t.dataset.size });
+        break;
+      }
+      case 'bin': {
+        e.stopPropagation();
+        const order = +t.dataset.order;
+        if (ui.armedBin && ui.armedBin.order === order && Date.now() - ui.armedBin.t < 4000) {
+          ui.armedBin = null;
+          if (act({ type: 'discard', order })) toast('🗑️ Binned — the plate went to the sink.');
+        } else { ui.armedBin = { order, t: Date.now() }; ui.sel = order; render(); setTimeout(render, 4100); }
+        return;
+      }
       case 'ret': {
         e.stopPropagation();
         const order = +t.dataset.order, ing = t.dataset.ing;

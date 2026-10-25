@@ -1,6 +1,14 @@
 # Küchen-Chaos
 
-A real-time cooperative kitchen game for 2–4 players, one iPad each, played in the browser. It follows scenario 1 ("Your first restaurant") of the Kitchen Rush revised rules, with its own dishes and artwork.
+A real-time cooperative kitchen game for 2–4 players, one iPad each, played in the browser. It follows the first three scenarios of the Kitchen Rush revised rules, with its own dishes and artwork.
+
+## Restaurants
+
+1. Your first restaurant — one sand timer each, 8 friends as guests, every chef serves 2 meals. Wrong ingredients can be put back.
+2. The first week — adds the greenhouse with spices, a second sand timer each, 22 more guests, and plates one size bigger are allowed. No more putting back. The team serves 8 meals (3 players).
+3. Cleaning up — most plates start dirty and must be washed at the sink, guests buy a drink (+1 coin) when seated, served meals pay their price, and unserved orders cost a free drink. Botched meals can be binned. The team earns 25 coins (34 in challenge mode).
+
+Goals scale with the number of players, as in the board game.
 
 ## Publish
 
