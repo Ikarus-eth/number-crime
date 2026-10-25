@@ -1097,10 +1097,17 @@ safe-buffer/index.js:
     const cfg = cfgOf(s);
     const strict = !!s.settings.strict;
     if (!HOST_ONLY.includes(a.type) && !s.players.some(p => p.id === pid)) throw new Error('You are watching this round.');
+    const AREAS_OF = { storage: ['storA', 'storB', 'storC'], spice: ['green'], order: ['dining'], cook: ['stove'], wash: ['sink'], shop: ['van'], office: ['office'], reception: ['reception'] };
     const needOpen = (type, msg) => {
       if (!inPlay(s, now)) throw new Error('The shift is not running.');
       const op = s.open[pid];
-      if (!op || op.type !== type) throw new Error(msg);
+      if (!op || op.type !== type) {
+        // Rulebook (multitasking): placing your next timer ends the action before it, even while
+        // the first timer's sand is still running. Explain that instead of a generic message.
+        const still = ownersFor(s, pid).some(o => (s.workers[o] || []).some(w => w && w.by === pid && AREAS_OF[type].includes(w.area)));
+        if (still) throw new Error('That visit ended when you started your next action. Send a free timer there for a new visit.');
+        throw new Error(msg);
+      }
       return op;
     };
     switch (a.type) {
