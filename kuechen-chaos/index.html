@@ -551,6 +551,19 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
   .kitchen .mytks { overflow: visible; }
 }
 
+/* team dock: compact rows under your own tickets */
+.teamdock { flex: none; display: flex; flex-direction: column; gap: 4px; border-top: 2px dashed rgba(29,42,68,.25); padding-top: 6px; }
+.team { gap: 4px; }
+.mate { display: flex; align-items: center; gap: 8px; padding: 3px 8px; min-height: 40px; border-width: 1.5px; border-left-width: 7px; }
+.mate b { font-size: 15px; font-weight: 600; flex: none; }
+.mate .msum { margin: 0; flex: none; gap: 3px; flex-wrap: nowrap; }
+.mate .ts { font-size: 17px; padding: 0 4px; }
+.mate .doing { font-size: 13px; }
+.feed { font-size: 12px; }
+.feed li:first-child { font-size: 13px; }
+.matecard { border-top: 8px solid var(--c) !important; }
+.matecard .mytks { margin: 10px 0; overflow: visible; }
+
 </style>
 </head>
 <body>
@@ -1671,7 +1684,7 @@ safe-buffer/index.js:
   let netStatus = '';
   let seenErr = 0;
   let sound = LS.get('kc-sound', true);
-  const ui = { screen: 'home', sel: null, armed: null, menu: false, help: false, joining: false, results: true, shop: { ing: null, cheap: [], pricey: [] }, throwSel: [], expand: {} };
+  const ui = { screen: 'home', sel: null, armed: null, menu: false, help: false, joining: false, results: true, shop: { ing: null, cheap: [], pricey: [] }, throwSel: [], mate: null };
 
   const app = document.getElementById('app');
   const hostNow = () => (role === 'host' ? Date.now() : Date.now() + offset);
@@ -2238,11 +2251,11 @@ safe-buffer/index.js:
         </div>
         <aside class="kitchen">
           ${status}
-          ${teamPanel(g, now)}
-          ${feedPanel(g)}
           <div class="mytks">${myOrders.length ? myOrders.map(o => ticket(g, o, true)).join('') : (meP ? '<p class="empty-k">Your order tickets land here. Start at the dining room 📝, or seat more guests at the reception 🚪.</p>' : '')}</div>
+          <div class="teamdock">${teamPanel(g, now)}${feedPanel(g)}</div>
         </aside>
       </div>
+      ${ui.mate && g.players.some(p => p.id === ui.mate) ? renderMate(g, ui.mate) : ''}
       ${g.phase === 'ready' ? renderReady(g) : ''}
       ${g.phase === 'between' ? renderBetween(g) : ''}
       ${op && op.type === 'shop' && (g.phase === 'play' || g.phase === 'grace') ? renderShop(g) : ''}
@@ -2315,11 +2328,10 @@ safe-buffer/index.js:
     if (g.phase !== 'play' || now < g.shiftStart) return '';
     return E.workerReady(g, pid, now) ? 'has a free timer' : 'is waiting for the sand';
   }
+  // Just the dish — whether it's right is for the chef to check, same as on your own tickets.
   function ticketSummary(g, o) {
     const d = E.DISHES[o.dish];
-    const ingNeed = Object.values(d.ing).reduce((a, b) => a + b, 0) + Object.values(d.sp).reduce((a, b) => a + b, 0);
-    const ingHave = Object.values(o.ing).reduce((a, b) => a + b, 0) + Object.values(o.sp || {}).reduce((a, b) => a + b, 0);
-    return `<span class="ts ${o.served ? 'srv' : ''}" title="${esc(d.name)}">${d.e}<small>${o.served ? '🛎️' : `${o.plate ? '🍽️' : ''}${ingHave}/${ingNeed} 🍳${o.row}/${d.cook}`}</small></span>`;
+    return `<span class="ts ${o.served ? 'srv' : ''}" title="${esc(d.name)}">${d.e}${o.served ? '🛎️' : ''}</span>`;
   }
   function teamPanel(g, now) {
     const mates = g.players.filter(p => p.id !== me.pid);
@@ -2330,13 +2342,19 @@ safe-buffer/index.js:
         : w ? `<span class="mtt" style="--c:${COLORS[p.color]}" data-wstart="${w.start}" title="${E.AREA_NAME[w.area]}"><span class="mi">${AREA_ICON[w.area]}</span><em class="sec"></em></span>`
         : '<span class="mtt idle" title="Free">·</span>').join('');
       const os = g.orders.filter(o => o.pid === p.id);
-      const open = !!ui.expand[p.id];
-      return `<div class="mate" style="--c:${COLORS[p.color]}" data-a="expand" data-id="${p.id}">
-        <div class="mtop"><b>${esc(p.name)}</b><span class="mtimers">${timers}</span><span class="doing">${doingText(g, p.id, now)}</span><span class="chev">${os.length ? (open ? '▾' : '▸') : ''}</span></div>
-        <div class="msum">${os.length ? os.map(o => ticketSummary(g, o)).join('') : '<span class="none">no orders yet</span>'}</div>
-        ${open && os.length ? `<div class="otks">${os.map(o => ticket(g, o, false)).join('')}</div>` : ''}
+      return `<div class="mate" style="--c:${COLORS[p.color]}" data-a="mate" data-id="${p.id}" role="button" aria-label="Show ${esc(p.name)}'s orders">
+        <b>${esc(p.name)}</b><span class="mtimers">${timers}</span><span class="doing">${doingText(g, p.id, now)}</span><span class="msum">${os.map(o => ticketSummary(g, o)).join('')}</span>
       </div>`;
     }).join('')}</div>`;
+  }
+  function renderMate(g, pid) {
+    const p = playerOf(g, pid);
+    const os = g.orders.filter(o => o.pid === pid);
+    return `<div class="sheet" data-a="closeMate"><div class="card matecard" data-stop="1" style="--c:${COLORS[p.color]}">
+      <h2>${dot(p.color)}${esc(p.name)}'s orders</h2>
+      <div class="mytks">${os.length ? os.map(o => ticket(g, o, false)).join('') : '<p class="none">No orders yet.</p>'}</div>
+      <button class="btn" data-a="closeMate">Close</button>
+    </div></div>`;
   }
 
   function feedLine(g, f) {
@@ -2362,7 +2380,7 @@ safe-buffer/index.js:
   }
   function feedPanel(g) {
     if (!g.feed || !g.feed.length || g.phase === 'ready') return '';
-    return `<ul class="feed">${g.feed.slice(-4).reverse().map(f => feedLine(g, f)).join('')}</ul>`;
+    return `<ul class="feed">${g.feed.slice(-2).reverse().map(f => feedLine(g, f)).join('')}</ul>`;
   }
 
   // ---------- score tables: who brought what in and who cost what ----------
@@ -2627,7 +2645,7 @@ safe-buffer/index.js:
     const t = e.target.closest('[data-a]');
     if (!t) return;
     // clicks inside a card shouldn't close its sheet
-    if ((t.dataset.a === 'closeHelp' || t.dataset.a === 'closeMenu') && t.classList.contains('sheet') && e.target.closest('[data-stop]')) return;
+    if ((t.dataset.a === 'closeHelp' || t.dataset.a === 'closeMenu' || t.dataset.a === 'closeMate') && t.classList.contains('sheet') && e.target.closest('[data-stop]')) return;
     unlockAudio();
     const a = t.dataset.a;
     const g = game();
@@ -2687,7 +2705,8 @@ safe-buffer/index.js:
         if (g && act({ type: 'serve', order })) toast('🛎️ Served — the tip is in the office');
         return;
       }
-      case 'expand': ui.expand[t.dataset.id] = !ui.expand[t.dataset.id]; render(); break;
+      case 'mate': ui.mate = t.dataset.id; render(); break;
+      case 'closeMate': ui.mate = null; render(); break;
       case 'latePay': if (g && act({ type: 'latePay', owner: t.dataset.owner, t: +t.dataset.t })) toast('⏳ The timer is back at work'); break;
       case 'officeCard': if (g && act({ type: 'officeCard', card: t.dataset.card })) toast(`${E.OFFICE[t.dataset.card].e} ${E.OFFICE[t.dataset.card].n} — done`); break;
       case 'buyIng': if (g && ui.shop.ing && act({ type: 'buy', kind: 'ing', ing: ui.shop.ing, room: t.dataset.room })) toast(`🚐 Bought 5 ${E.ING_INFO[ui.shop.ing].e}`); break;
