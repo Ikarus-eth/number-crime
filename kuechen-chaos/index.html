@@ -2725,7 +2725,7 @@ safe-buffer/index.js:
       case 'takeIng': {
         if (!g) return;
         const op = myOpen(g);
-        if (!op || op.type !== 'storage') { toast('Put your timer in a storage room first.', 'err'); return; }
+        if (!op || op.type !== 'storage') { act({ type: 'takeIng', order: ui.sel || 0, ing: t.dataset.ing }); return; } // the engine explains why
         if (op.room !== t.dataset.room) { toast(`Your timer is in storage room ${op.room === 'A' ? 1 : 2}.`, 'err'); return; }
         if (!ui.sel) { toast('Take an order first — ingredients only go on your own plates.', 'err'); return; }
         act({ type: 'takeIng', order: ui.sel, ing: t.dataset.ing });
@@ -2735,7 +2735,7 @@ safe-buffer/index.js:
       case 'takeSpice': {
         if (!g) return;
         const op = myOpen(g);
-        if (!op || op.type !== 'spice') { toast('Put a timer in the greenhouse first.', 'err'); return; }
+        if (!op || op.type !== 'spice') { act({ type: 'takeSpice', order: ui.sel || 0, spice: t.dataset.spice }); return; }
         if (!ui.sel) { toast('Take an order first — spices only go on your own plates.', 'err'); return; }
         act({ type: 'takeSpice', order: ui.sel, spice: t.dataset.spice });
         break;
