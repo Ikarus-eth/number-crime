@@ -18,9 +18,12 @@ Everything is in the single `index.html`. No account or server setup is needed.
 3. On the other iPads, type that code and tap "Join".
 4. The host picks the settings and taps "Set the tables", then "Start the shift" once you have made a plan.
 
-The iPads need internet access. They do not need to be on the same Wi-Fi. If an iPad reloads or wakes up, it rejoins the running game by tapping Join again; if the host reloads, tap "Continue …" on the start screen.
+The iPads need internet access. They do not need to be on the same Wi-Fi. If the host iPad reloads, tap "Continue …" on its start screen.
 
-Tip: set Settings → Display & Brightness → Auto-Lock to "Never" on the host iPad while you play. The game also asks the screen to stay on.
+Tips for the iPads:
+- In Safari, tap Share → "Add to Home Screen" and start the game from that icon. It then runs full screen, which leaves more room for the board.
+- Set Settings → Display & Brightness → Auto-Lock to "Never" on the host iPad while you play. If the host iPad locks, the other iPads pause until it wakes.
+- A guest iPad that reloads goes straight back into its game.
 
 ## Settings
 

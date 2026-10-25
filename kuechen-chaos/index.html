@@ -130,7 +130,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
 .spot.mine.expired { animation: nudge 1.4s ease-in-out infinite; }
 @keyframes nudge { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--c) 45%, transparent); } }
 
-.queue { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.queue { display: flex; align-items: center; gap: 18px; margin-top: 10px; }
 .queue p { margin: 0; font-size: 15px; color: var(--ink-2); }
 .stack { width: 40px; height: 52px; border-radius: 6px; background: var(--heat); border: 2px solid var(--ink); box-shadow: calc(var(--n) * 2px) calc(var(--n) * 2px) 0 #fff, calc(var(--n) * 2px + 2px) calc(var(--n) * 2px + 2px) 0 var(--ink); flex: none; }
 
@@ -265,6 +265,33 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   .spot.mine.expired, .chip.armed { animation: none; }
   #toast { transition: none; }
+}
+
+/* ---------- kid-friendly helpers ---------- */
+.hint { display: block; margin-top: 4px; color: #FFD27A; font-size: 15px; }
+.ni { display: inline-block; position: relative; }
+.ni.got::after { content: '✓'; position: absolute; right: -4px; bottom: -6px; font-size: 11px; font-weight: 700; color: #fff; background: var(--ok); border-radius: 50%; width: 14px; height: 14px; line-height: 14px; text-align: center; }
+.pl.got { background: #DDF3E7; box-shadow: inset 0 0 0 3px #B5E2C9; }
+.glass.go { animation: ready 1.2s ease-in-out infinite; }
+@keyframes ready { 50% { box-shadow: 0 0 0 8px rgba(255,255,255,.35); } }
+@media (prefers-reduced-motion: reduce) { .glass.go { animation: none; } }
+
+/* Safari's tab bar leaves ~740 px in landscape: tighten the board */
+@media (orientation: landscape) and (max-height: 780px) {
+  .bar { padding: 6px 12px; }
+  .clock { font-size: 30px; line-height: 40px; }
+  .main { gap: 10px; padding: 8px 10px; }
+  .board { gap: 8px; }
+  .area { padding: 6px 8px 8px; }
+  .area h3 { font-size: 15px; margin-bottom: 4px; }
+  .spot { width: 52px; height: 52px; font-size: 21px; }
+  .spot.taken .ini { width: 30px; height: 30px; font-size: 16px; }
+  .ing { min-height: 40px; font-size: 20px; }
+  .ings { margin-top: 6px; gap: 5px; }
+  .seat { min-height: 84px; }
+  .queue { margin-top: 6px; }
+  .stack { width: 34px; height: 44px; }
+  .glass { width: 58px; height: 58px; }
 }
 
 </style>
@@ -462,9 +489,12 @@ safe-buffer/index.js:
     }
   }
 
+  const HOST_ONLY = ['start', 'endNow'];
+
   function doApply(s, a, now) {
     const pid = a.pid;
     const strict = !!s.settings.strict;
+    if (!HOST_ONLY.includes(a.type) && !s.players.some(p => p.id === pid)) throw new Error('You are watching this round.');
     switch (a.type) {
       case 'start': {
         if (s.phase !== 'ready') throw new Error('Already started.');
@@ -616,7 +646,7 @@ safe-buffer/index.js:
 
   root.Engine = {
     ING, ING_INFO, PLATES, PLATE_NAME, DISHES, FRIENDS, MAX_ROW, GOAL_PER_PLAYER, AREAS, AREA_NAME, ROOM_OF,
-    layout, newGame, apply, tick, finish, checkOrder, needsIng, ingComplete, goalMet, workerReady, workerLeft,
+    HOST_ONLY, layout, newGame, apply, tick, finish, checkOrder, needsIng, ingComplete, goalMet, workerReady, workerLeft,
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -759,6 +789,7 @@ safe-buffer/index.js:
   // ---------- sound ----------
   let actx = null;
   function unlockAudio() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* older iOS */ }
     if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { /* none */ } }
     if (actx && actx.state === 'suspended') actx.resume();
   }
@@ -830,8 +861,14 @@ safe-buffer/index.js:
   function publish() { if (net && role === 'host') net.publish(Object.assign({}, wrap, { now: Date.now() })); }
   function changed() { wrap.rev++; saveHost(); publish(); render(); }
 
+  const seenAids = [];
   function onRemoteAct(a) {
     if (!a || !a.type || !wrap) return;
+    if (E.HOST_ONLY.includes(a.type)) return;
+    if (a.aid) { // the relay may deliver a message twice; never apply an action twice
+      if (seenAids.includes(a.aid)) return;
+      seenAids.push(a.aid); if (seenAids.length > 300) seenAids.shift();
+    }
     const g = game();
     if (a.type === 'join') {
       if (g && g.players.some(p => p.id === a.pid)) return; // rejoin: they already get the state
@@ -889,26 +926,37 @@ safe-buffer/index.js:
       render();
     } catch (e) {
       role = null; room = null; ui.joining = false; ui.screen = 'home';
+      LS.del('kc-guest');
       render();
       toast(`No game called ${code} found. Check the code on the host iPad.`, 'err');
     }
   }
   function sendJoin() { if (net) net.send({ type: 'join', pid: me.pid, name: me.name, color: me.color }); }
 
+  let authWrap = null;      // last state from the host (wrap may hold an optimistic copy on top)
+  let optimisticAt = 0;
   function onState(w) {
     if (!w || w.room !== room) return;
     lastMsgAt = Date.now();
     offsets.push(w.now - Date.now());
     if (offsets.length > 15) offsets.shift();
     offset = Math.max.apply(null, offsets);
-    const prev = wrap;
+    const prev = authWrap;
+    if (prev && prev.rev === w.rev) return; // heartbeat, nothing new
+    authWrap = w;
+    const shown = wrap;
     wrap = w;
-    if (!prev || prev.rev !== w.rev) {
-      const pg = prev && prev.game, g = w.game;
-      if (g && pg && pg.phase !== g.phase) onPhaseChange(pg.phase, g.phase);
-      render();
-    }
+    optimisticAt = 0;
+    const pg = shown && shown.game, g = w.game;
+    if (g && pg && pg.phase !== g.phase) onPhaseChange(pg.phase, g.phase);
+    render();
   }
+  // An action that never reached the host would leave the screen out of step: fall back after 3 s.
+  setInterval(() => {
+    if (role === 'guest' && optimisticAt && Date.now() - optimisticAt > 3000 && authWrap) {
+      wrap = authWrap; optimisticAt = 0; render();
+    }
+  }, 1000);
 
   // ---------- actions ----------
   function act(a) {
@@ -921,12 +969,20 @@ safe-buffer/index.js:
       changed();
       return true;
     }
-    if (g) { // check locally first so a wrong tap gets instant feedback
+    if (!net) return false;
+    a.aid = rid() + rid();
+    if (g) {
+      // Apply the move on this iPad straight away so the tap feels instant; the host's
+      // answer replaces this copy a moment later.
       const copy = JSON.parse(JSON.stringify(g));
       const err = E.apply(copy, a, hostNow());
       if (err) { toast(err, 'err'); return false; }
+      copy.errs = g.errs;
+      wrap = Object.assign({}, wrap, { game: copy });
+      optimisticAt = optimisticAt || Date.now();
+      render();
     }
-    net && net.send(a);
+    net.send(a);
     return true;
   }
 
@@ -962,6 +1018,11 @@ safe-buffer/index.js:
   const plateBadge = (size, extra) => `<span class="pl pl-${size} ${extra || ''}" title="${E.PLATE_NAME[size]} plate">${size}</span>`;
   const pot = n => `<span class="pot" title="Cook ${n}×">🍳<b>${n}</b></span>`;
   const ingRow = ingObj => E.ING.filter(i => ingObj[i]).map(i => E.ING_INFO[i].e.repeat(ingObj[i])).join('');
+  // Needed ingredients one by one; the ones already on the plate are ticked off.
+  const needIcons = (d, o) => E.ING.filter(i => d.ing[i]).map(i => {
+    const have = o.ing[i] || 0;
+    return Array.from({ length: d.ing[i] }, (_, k) => `<span class="ni ${k < have ? 'got' : ''}">${E.ING_INFO[i].e}</span>`).join('');
+  }).join('');
   const dot = color => `<i class="dot" style="background:${COLORS[color]}"></i>`;
 
   function spot(g, area, idx) {
@@ -1002,7 +1063,7 @@ safe-buffer/index.js:
     const canFill = op && op.type === 'storage';
     return `<div class="ticket ${sel ? 'sel' : ''} ${canCook ? 'cookable' : ''}" ${mine ? `data-a="sel" data-order="${o.id}"` : ''}>
       <div class="tk-head"><span class="tk-e">${d.e}</span><span class="tk-n">${d.name}</span>${sel && canFill ? '<span class="tk-tag">filling</span>' : ''}</div>
-      <div class="tk-need">${plateBadge(d.plate)}<span class="tk-i">${ingRow(d.ing)}</span>${pot(d.cook)}</div>
+      <div class="tk-need">${plateBadge(d.plate, o.plate === d.plate ? 'got' : '')}<span class="tk-i">${needIcons(d, o)}</span>${pot(d.cook)}</div>
       <div class="tk-plate">${o.plate ? plateBadge(o.plate, 'big') : `<span class="noplate">${mine ? 'Take a plate from the cupboard' : 'no plate'}</span>`}<span class="chips">${chips}</span></div>
       <div class="tk-cook"><span class="cells">${cells.join('')}</span><span class="ct">${cookTxt}</span></div>
       ${canCook ? `<button class="btn cookbtn" data-a="cook" data-order="${o.id}">Cook one step</button>` : ''}
@@ -1094,19 +1155,25 @@ safe-buffer/index.js:
     }).join('');
 
     let prompt = '', promptBtn = '';
-    if (!meP) prompt = 'You are watching this game. Join the next one from the lobby.';
-    else if (g.phase === 'ready') prompt = `Plan together. Goal: every chef serves ${E.GOAL_PER_PLAYER} meals correctly before the time runs out.`;
-    else if (g.phase === 'grace') prompt = op ? 'Time is up! Finish the action you started.' : 'Time is up! Waiting for the others to finish.';
-    else if (op && op.type === 'order') prompt = 'Tap a guest in the dining room to take their order.';
-    else if (op && op.type === 'storage') { prompt = selO ? `Tap ingredients in storage room ${op.room === 'A' ? 1 : 2} for your ${E.DISHES[selO.dish].name}. Tap another ticket to fill that one.` : 'Take an order first — ingredients only go on your own plates.'; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
-    else if (op && op.type === 'cook') { prompt = 'Tap “Cook one step” on a meal.'; promptBtn = '<button class="btn ghost" data-a="done">Skip</button>'; }
+    const ready = meP && E.workerReady(g, me.pid, now);
+    const noPlate = myOrders.find(o => !o.plate);
+    const platePrompt = noPlate && (g.phase === 'play' || g.phase === 'grace') ? `<span class="hint">🍽️ Take a plate for your ${E.DISHES[noPlate.dish].name} from the cupboard.</span>` : '';
+    if (!meP) prompt = 'You are watching this round. You can play in the next one.';
+    else if (g.phase === 'ready') prompt = `Plan together. Every chef serves ${E.GOAL_PER_PLAYER} meals.`;
+    else if (g.phase === 'results') { prompt = 'The shift is over.'; promptBtn = '<button class="btn" data-a="showResults">Results</button>'; }
+    else if (op && op.type === 'order') { prompt = g.seats.some(s => s.dish) ? '📝 Tap a guest to take their order.' : '📝 Nobody is waiting for you to take their order.'; promptBtn = '<button class="btn ghost" data-a="done">Skip</button>'; }
+    else if (op && op.type === 'storage') { prompt = selO ? `📦 Tap ingredients for your ${E.DISHES[selO.dish].name}.${myOrders.length > 1 ? ' Tap another ticket to fill that one.' : ''}` : '📦 Take an order first. Ingredients only go on your own plates.'; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
+    else if (op && op.type === 'cook') { prompt = myOrders.length ? '🔥 Tap “Cook one step” on a meal.' : '🔥 You have nothing to cook yet.'; promptBtn = '<button class="btn ghost" data-a="done">Skip</button>'; }
+    else if (g.phase === 'grace') prompt = 'Time is up! Waiting for the others to finish.';
     else if (now < g.shiftStart) prompt = 'Get ready…';
-    else prompt = E.workerReady(g, me.pid, now) ? 'Your timer is free. Tap a circle to start your next action.' : 'Your sand is running. Plan your next move.';
+    else prompt = ready ? 'Your timer is free. Tap a circle.' : 'Your sand is running. Plan your next move.';
+    if (g.phase === 'grace' && op) prompt = 'Time is up! Finish this: ' + prompt;
+    if (platePrompt && meP && g.phase !== 'results') prompt += platePrompt;
 
     const w = meP && g.workers[me.pid];
     const myColor = meP ? COLORS[meP.color] : '#999';
     const status = meP ? `<div class="me" style="--c:${myColor}">
-        <div class="glass ${w ? '' : 'free'}" ${w ? `data-wstart="${w.start}"` : ''}><span class="hg">⏳</span><em class="sec"></em></div>
+        <div class="glass ${w ? '' : 'free'} ${ready && g.phase === 'play' && now >= g.shiftStart && !op ? 'go' : ''}" ${w ? `data-wstart="${w.start}"` : ''}><span class="hg">⏳</span><em class="sec"></em></div>
         <div class="prompt"><p id="prompt">${prompt}</p>${promptBtn}</div>
       </div>` : `<div class="me"><div class="prompt"><p>${prompt}</p></div></div>`;
 
@@ -1203,7 +1270,16 @@ safe-buffer/index.js:
     </div></div>`;
   }
 
+  // Replacing the page while a finger is on the glass swallows the tap, so wait until it lifts.
+  let touching = 0, pendingRender = false;
+  document.addEventListener('pointerdown', () => { touching = Date.now(); }, true);
+  const lift = () => setTimeout(() => { touching = 0; if (pendingRender) { pendingRender = false; render(); } }, 60);
+  document.addEventListener('pointerup', lift, true);
+  document.addEventListener('pointercancel', lift, true);
+  setInterval(() => { if (touching && Date.now() - touching > 1500) { touching = 0; if (pendingRender) { pendingRender = false; render(); } } }, 500);
+
   function render() {
+    if (touching) { pendingRender = true; return; }
     let html;
     if (ui.screen === 'home' || !role) html = renderHome();
     else if (ui.joining || !wrap) html = `<main class="home"><h1 class="logo small">Küchen<span>-</span>Chaos</h1><p class="sub">Looking for ${esc(room || '')}…</p></main>`;
@@ -1288,7 +1364,11 @@ safe-buffer/index.js:
     if (e.target.id === 'nm') { me.name = e.target.value.trim(); saveMe(); }
   });
   app.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && e.target.id === 'code') { unlockAudio(); guestJoin(e.target.value); }
+    if (e.key === 'Enter' && e.target.id === 'code') {
+      unlockAudio();
+      if (!me.name) { toast('Type your name first.', 'err'); return; }
+      guestJoin(e.target.value);
+    }
   });
 
   app.addEventListener('click', e => {
@@ -1314,9 +1394,10 @@ safe-buffer/index.js:
       case 'closeMenu': ui.menu = false; render(); break;
       case 'sound': sound = !sound; LS.set('kc-sound', sound); render(); break;
       case 'leave':
+        if (role === 'host' && !confirm('Close the restaurant? The other iPads will lose this game.')) return;
         if (role === 'guest' && net) { if (!g) net.send({ type: 'leave', pid: me.pid }); net.close(); LS.del('kc-guest'); }
         if (role === 'host' && net) { net.clear(); net.close(); LS.del('kc-host'); }
-        role = null; net = null; wrap = null; room = null; offsets = []; ui.menu = false; ui.screen = 'home'; render(); break;
+        role = null; net = null; wrap = null; authWrap = null; optimisticAt = 0; room = null; offsets = []; ui.menu = false; ui.screen = 'home'; render(); break;
       case 'set': {
         if (role !== 'host') return;
         const k = t.dataset.k; let v = t.dataset.v;
@@ -1328,11 +1409,15 @@ safe-buffer/index.js:
         if (role !== 'host') return;
         wrap.game = E.newGame(wrap.lobby.settings, wrap.lobby.players);
         ui.results = true; ui.sel = null; changed(); break;
-      case 'lobby': if (role !== 'host') return; wrap.game = null; ui.menu = false; changed(); break;
+      case 'lobby':
+        if (role !== 'host') return;
+        if (g && (g.phase === 'play' || g.phase === 'grace') && !confirm('Stop this shift and go back to the lobby?')) return;
+        wrap.game = null; ui.menu = false; changed(); break;
       case 'startShift': if (role === 'host' && g) { E.apply(g, { type: 'start' }, Date.now()); changed(); keepAwake(); } break;
-      case 'endNow': if (role === 'host' && g) { E.apply(g, { type: 'endNow' }, Date.now()); ui.menu = false; changed(); } break;
+      case 'endNow': if (role === 'host' && g && confirm('End the shift now and check the meals?')) { E.apply(g, { type: 'endNow' }, Date.now()); ui.menu = false; changed(); } break;
       case 'log': downloadLog(); break;
       case 'hideResults': ui.results = false; render(); break;
+      case 'showResults': ui.results = true; render(); break;
       case 'place': {
         if (!g) return;
         const area = t.dataset.area, idx = +t.dataset.idx;
@@ -1383,6 +1468,8 @@ safe-buffer/index.js:
 
   const E_NET = window.Net;
   render();
+  const back = LS.get('kc-guest', null);
+  if (!qRoom && back && me.name && Date.now() - back.at < 3 * 3600e3 && !LS.get('kc-host', null)) guestJoin(back.room);
 })();
 
 </script>
