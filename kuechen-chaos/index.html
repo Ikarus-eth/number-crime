@@ -353,6 +353,81 @@ h1, h2, h3 { margin: 0; font-weight: 600; }
   .seat { min-height: 66px; }
 }
 
+/* ---------- restaurants 4 & 5: van, storage 3, shifts ---------- */
+.st3 { grid-area: st3; }
+.area.van { grid-area: van; }
+.board.scen-4 { grid-template-areas: "rec din din" "green din din" "st1 st2 stove" "sink cup cup"; }
+.board.scen-5 { grid-template-areas: "rec din din" "green din din" "st1 st2 st3" "stove sink cup"; }
+.st3 .ings { grid-template-columns: repeat(2, 1fr); }
+.vanrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.vanbtn { display: flex; align-items: center; gap: 6px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; padding: 4px 10px; font-size: 24px; box-shadow: var(--lift); min-height: 46px; }
+.vanbtn span { display: flex; flex-direction: column; font-size: 15px; font-weight: 600; text-align: left; line-height: 1.1; }
+.vanbtn small { font-weight: 400; font-size: 12px; color: var(--ink-2); }
+.vanbtn:disabled { opacity: .45; }
+.vanbtn:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
+.vts { display: flex; gap: 4px; flex-wrap: wrap; }
+.vt { --p: 0; position: relative; width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--ink); display: grid; place-items: center; background: conic-gradient(var(--c) calc(var(--p) * 360deg), color-mix(in srgb, var(--c) 25%, #fff) 0); }
+.vt .ini { width: 22px; height: 22px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.vt .sec { position: absolute; bottom: -5px; right: -6px; font-style: normal; font-size: 11px; font-weight: 700; background: var(--ink); color: #fff; border-radius: 6px; padding: 0 3px; }
+.vt .sec:empty { display: none; }
+.shiftchip b { font-size: 20px; }
+.shop { max-width: 640px !important; }
+.shop h3 { font-size: 18px; margin: 14px 0 6px; }
+.shoprow { display: flex; flex-wrap: wrap; gap: 8px; }
+.sbtn { display: flex; flex-direction: column; align-items: center; min-width: 64px; min-height: 60px; justify-content: center; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; font-size: 26px; padding: 4px 8px; box-shadow: var(--lift); }
+.sbtn small { font-size: 12px; color: var(--ink-2); }
+.sbtn.on { background: #FFE2B8; border-color: var(--heat); }
+.sbtn:active { transform: translateY(2px); box-shadow: none; }
+.shoprooms { margin-top: 10px; font-size: 17px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tray { display: flex; align-items: center; gap: 6px; margin-top: 8px; min-height: 48px; }
+.tray .slot { width: 40px; height: 40px; border: 2px dashed var(--steel); border-radius: 10px; display: grid; place-items: center; font-size: 22px; background: #fff; }
+.shopsheet { z-index: 25; }
+.shop > .btn.ghost { margin-top: 16px; }
+@media (max-width: 640px) {
+  .board.scen-4 { grid-template-areas: "rec green" "din din" "st1 st2" "stove cup" "sink sink"; }
+  .board.scen-5 { grid-template-areas: "rec green" "din din" "st1 st2" "st3 stove" "sink cup"; }
+}
+
+.vanbar { display: flex; align-items: center; gap: 6px; padding: 3px 6px 3px 3px; border-radius: 12px; }
+.vanbar.active { background: var(--heat); }
+.vanbar .vanbtn { font-size: 22px; min-height: 40px; padding: 2px 8px; color: var(--ink); }
+.vanbar .vanbtn span { font-size: 14px; }
+.vanbar .vt { border-color: #fff; }
+.vanbar .vt .ini { color: var(--ink); }
+.st3 .ahead h3 { white-space: nowrap; }
+
+/* tighter guest cards and plates so restaurants 4 & 5 fit Safari's landscape height */
+.mt-top .mt-n { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mt-r { font-size: 12px; flex-wrap: nowrap; }
+.mt-i { letter-spacing: -2px; white-space: nowrap; overflow: hidden; min-width: 0; flex: 1; }
+.mt-r .pl { width: 22px; height: 22px; font-size: 10px; }
+.board.scen-4 .cupboard .pl.big.pl-S, .board.scen-5 .cupboard .pl.big.pl-S { width: 26px; height: 26px; }
+.board.scen-4 .cupboard .pl.big.pl-M, .board.scen-5 .cupboard .pl.big.pl-M { width: 31px; height: 31px; }
+.board.scen-4 .cupboard .pl.big.pl-L, .board.scen-5 .cupboard .pl.big.pl-L { width: 36px; height: 36px; }
+.board.scen-4 .cupboard .pl.big.pl-XL, .board.scen-5 .cupboard .pl.big.pl-XL { width: 41px; height: 41px; }
+.board.scen-5 .stove .spots { gap: 5px; }
+@media (orientation: landscape) and (max-height: 780px) {
+  .board.scen-5 .stove .spot { width: 46px; height: 46px; font-size: 19px; }
+  .seat { min-height: 60px; }
+}
+.seats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.seat { min-width: 0; overflow: hidden; }
+.mt-r { flex-wrap: wrap; row-gap: 2px; }
+.mt-i { white-space: normal; overflow: visible; flex: 0 1 auto; letter-spacing: -1px; }
+.mt-r .pot { flex: none; }
+@media (orientation: landscape) and (max-height: 720px) {
+  .bar { padding: 4px 10px; }
+  .main { padding: 6px 8px; gap: 8px; }
+  .board { gap: 6px; }
+  .area { padding: 5px 7px 6px; }
+  .area h3 { font-size: 14px; }
+  .spot, .ahead .spot, .board.scen-5 .stove .spot { width: 42px; height: 42px; font-size: 18px; }
+  .spot.taken .ini, .ahead .spot.taken .ini { width: 26px; height: 26px; font-size: 14px; }
+  .ing { min-height: 34px; }
+  .ing.spice { min-height: 32px; }
+  .pbtn { padding: 2px 4px; }
+}
+
 </style>
 </head>
 <body>
@@ -440,22 +515,53 @@ safe-buffer/index.js:
     diavola:   { name: 'Spicy Pizza',         e: '🍕', plate: 'L',  ing: { bread: 2, cheese: 1, meat: 1 }, sp: { chili: 1 },              cook: 2, c: 4 },
     platter:   { name: 'Family Platter',      e: '🍱', plate: 'XL', ing: { meat: 1, veg: 1, salad: 1, bread: 1, cheese: 1 }, sp: { salt: 1, pepper: 1 }, cook: 2, c: 6 },
     roast:     { name: 'Sunday Roast',        e: '🍗', plate: 'XL', ing: { meat: 2, veg: 2 },              sp: { salt: 1, herbs: 1 },     cook: 3, c: 6 },
+    // Challenging patrons (scenario 4+): more ingredients, longer cooking, better pay
+    campur:    { name: 'Nasi Campur',         e: '🍚', plate: 'L',  ing: { meat: 2, veg: 1, salad: 1 },   sp: { chili: 1, curry: 1 },    cook: 2, c: 7, ch: true },
+    dumplings: { name: 'Dumplings',           e: '🥟', plate: 'M',  ing: { pasta: 1, meat: 1, veg: 1 },   sp: { herbs: 1, salt: 1 },     cook: 3, c: 6, ch: true },
+    pretzel:   { name: 'Pretzel Platter',     e: '🥨', plate: 'L',  ing: { bread: 2, cheese: 1, meat: 1 }, sp: { salt: 1, curry: 1 },    cook: 2, c: 6, ch: true },
+    bagel:     { name: 'Bagel Brunch',        e: '🥯', plate: 'M',  ing: { bread: 1, cheese: 1, meat: 1, salad: 1 }, sp: { pepper: 1 },   cook: 1, c: 5, ch: true },
+    turkey:    { name: 'Turkey Dinner',       e: '🦃', plate: 'XL', ing: { meat: 2, veg: 2, bread: 1 },   sp: { herbs: 1, salt: 1 },     cook: 3, c: 8, ch: true },
+    croissant: { name: 'Croissant Breakfast', e: '🥐', plate: 'M',  ing: { bread: 2, cheese: 1 },        sp: { salt: 1 },               cook: 2, c: 5, ch: true },
+    waffles:   { name: 'Waffle Tower',        e: '🧇', plate: 'M',  ing: { bread: 3 },                    sp: { salt: 2 },               cook: 2, c: 5, ch: true },
+    quiche:    { name: 'Quiche',              e: '🥧', plate: 'L',  ing: { bread: 1, cheese: 2, veg: 1, meat: 1 }, sp: { pepper: 1, herbs: 1 }, cook: 3, c: 7, ch: true },
+    bacon:     { name: 'Bacon & Toast',       e: '🥓', plate: 'M',  ing: { meat: 2, bread: 1 },           sp: { salt: 1, pepper: 1 },    cook: 2, c: 5, ch: true },
+    corn:      { name: 'Corn Feast',          e: '🌽', plate: 'L',  ing: { veg: 3, cheese: 1 },           sp: { chili: 1, salt: 1 },     cook: 2, c: 6, ch: true },
+    risotto:   { name: 'Mushroom Risotto',    e: '🍄', plate: 'L',  ing: { pasta: 2, veg: 1, cheese: 1 }, sp: { herbs: 1, salt: 1 },     cook: 3, c: 7, ch: true },
+    enchiladas:{ name: 'Enchiladas',          e: '🫔', plate: 'L',  ing: { bread: 2, meat: 1, cheese: 1, veg: 1 }, sp: { chili: 2 },     cook: 2, c: 7, ch: true },
+    sushi:     { name: 'Sushi Rolls',         e: '🍣', plate: 'M',  ing: { pasta: 1, meat: 1, veg: 1, salad: 1 }, sp: { herbs: 1 },      cook: 0, c: 6, ch: true },
+    riceballs: { name: 'Rice Balls',          e: '🍙', plate: 'S',  ing: { pasta: 2, salad: 1 },          sp: { salt: 1 },               cook: 1, c: 4, ch: true },
+    fries:     { name: 'Sweet Potato Fries',  e: '🍠', plate: 'S',  ing: { veg: 2 },                      sp: { salt: 1, chili: 1 },     cook: 2, c: 4, ch: true },
+    cake:      { name: 'Birthday Cake',       e: '🎂', plate: 'XL', ing: { bread: 3, cheese: 1 },         sp: { salt: 2 },               cook: 3, c: 8, ch: true },
+    antipasti: { name: 'Antipasti',           e: '🫒', plate: 'L',  ing: { cheese: 2, meat: 1, salad: 1, bread: 1 }, sp: { pepper: 1, herbs: 1 }, cook: 0, c: 6, ch: true },
+    picnic:    { name: 'Picnic Basket',       e: '🧺', plate: 'XL', ing: { bread: 1, cheese: 1, meat: 1, salad: 1, veg: 1 }, sp: { salt: 1, pepper: 1 }, cook: 1, c: 8, ch: true },
   };
   Object.values(DISHES).forEach(d => { d.sp = d.sp || {}; });
   const FRIENDS = Object.keys(DISHES).filter(k => DISHES[k].friend);
-  const REGULARS = Object.keys(DISHES).filter(k => !DISHES[k].friend);
+  const REGULARS = Object.keys(DISHES).filter(k => !DISHES[k].friend && !DISHES[k].ch);
+  const CHALLENGING = Object.keys(DISHES).filter(k => DISHES[k].ch);
+  const CHEAP = ['salt', 'pepper', 'herbs'], PRICEY = ['curry', 'chili'];
 
   const MAX_ROW = 4;          // player board: top row + 4 cooking rows (row > cook time = overcooked)
   const GRACE_MS = 20000;     // after time runs out, players may finish actions already started
 
+  const BASE = { timers: 2, normal: 240, spices: true, sink: true, money: true, bigger: true, fix: false, discard: true, shop: false, shifts: 1, salary: false, pantry: false, challenging: false };
   const SCEN = {
-    1: { name: 'Your first restaurant', timers: 1, normal: 270, spices: false, sink: false, money: false, bigger: false, fix: true, discard: false },
-    2: { name: 'The first week',        timers: 2, normal: 240, spices: true,  sink: false, money: false, bigger: true,  fix: false, discard: false },
-    3: { name: 'Cleaning up',           timers: 2, normal: 240, spices: true,  sink: true,  money: true,  bigger: true,  fix: false, discard: true },
+    1: Object.assign({}, BASE, { name: 'Your first restaurant', timers: 1, normal: 270, spices: false, sink: false, money: false, bigger: false, fix: true, discard: false }),
+    2: Object.assign({}, BASE, { name: 'The first week', sink: false, money: false, discard: false }),
+    3: Object.assign({}, BASE, { name: 'Cleaning up' }),
+    4: Object.assign({}, BASE, { name: 'The big rush', shop: true, shifts: 2, challenging: true }),
+    5: Object.assign({}, BASE, { name: 'Spoiled ingredients', shop: true, shifts: 2, challenging: true, salary: true, pantry: true }),
   };
+  const SALARY_PER_TIMER = 3;
 
-  const AREA_NAME = { reception: 'Reception', dining: 'Dining room', storA: 'Storage room 1', storB: 'Storage room 2', stove: 'Stove', green: 'Greenhouse', sink: 'Sink' };
-  const ROOM_OF = { storA: 'A', storB: 'B' };
+  const AREA_NAME = { reception: 'Reception', dining: 'Dining room', storA: 'Storage room 1', storB: 'Storage room 2', storC: 'Storage room 3', stove: 'Stove', green: 'Greenhouse', sink: 'Sink', van: 'Van' };
+  const ROOM_OF = { storA: 'A', storB: 'B', storC: 'C' };
+  const PANTRY_INGS = ['bread', 'pasta'];
+  // Which ingredients a storage room may hold (from scenario 5 bread and pasta live in room 3 only).
+  function roomIngs(s, room) {
+    if (!cfgOf(s).pantry) return ING;
+    return room === 'C' ? PANTRY_INGS : ING.filter(i => !PANTRY_INGS.includes(i));
+  }
 
   function pc(n) { return Math.max(2, Math.min(4, n)); }
   // Action spaces by player count (3 players: the 4-player spaces are covered). Seats: 6 minus reserved tables.
@@ -468,7 +574,9 @@ safe-buffer/index.js:
     const p = pc(n);
     if (scen === 1) return { kind: 'each', n: 2 };
     if (scen === 2) return { kind: 'meals', n: { 2: 5, 3: 8, 4: 10 }[p] };
-    return { kind: 'coins', n: (challenge ? { 2: 22, 3: 34, 4: 46 } : { 2: 16, 3: 25, 4: 32 })[p] };
+    if (scen === 3) return { kind: 'coins', n: (challenge ? { 2: 22, 3: 34, 4: 46 } : { 2: 16, 3: 25, 4: 32 })[p] };
+    if (scen === 4) return { kind: 'coins', n: (challenge ? { 2: 32, 3: 48, 4: 64 } : { 2: 24, 3: 35, 4: 48 })[p] };
+    return { kind: 'coins', n: challenge ? { 2: 10, 3: 14, 4: 18 }[p] : 1, salary: true };
   }
 
   function shuffle(a) {
@@ -489,10 +597,21 @@ safe-buffer/index.js:
     const seats = [];
     for (let i = 0; i < 6; i++) seats.push({ dish: null, reserved: i >= 6 - L.reserved });
 
-    let room, cupboard, dirty = { S: 0, M: 0, L: 0, XL: 0 }, bag = null;
+    let room, cupboard, dirty = { S: 0, M: 0, L: 0, XL: 0 }, bag = null, roomC = null;
     if (st.scenario === 1) {
       room = () => ({ cheese: 4, meat: 3, bread: 2, salad: 2, veg: 2, pasta: 1 });
       cupboard = { S: 2, M: 4, L: 1, XL: 1 };
+    } else if (st.scenario >= 4) {
+      const a = { 2: 2, 3: 3, 4: 4 }[p], b = { 2: 4, 3: 5, 4: 6 }[p];
+      if (cfg.pantry) {
+        const c = { 2: 3, 3: 4, 4: 5 }[p];
+        room = () => ({ cheese: a, meat: b, bread: 0, salad: a, veg: b, pasta: 0 });
+        roomC = { cheese: 0, meat: 0, bread: c, salad: 0, veg: 0, pasta: c };
+      } else room = () => ({ cheese: a, meat: b, bread: a, salad: a, veg: b, pasta: a });
+      bag = fill(SPICES, { 2: 1, 3: 2, 4: 3 }[p]);
+      const m = { 2: 2, 3: 3, 4: 4 }[p];
+      cupboard = { S: m, M: m, L: m, XL: { 2: 1, 3: 1, 4: 2 }[p] };
+      dirty = { S: 1, M: 1, L: 1, XL: 1 };
     } else {
       const a = { 2: 4, 3: 5, 4: 6 }[p], b = { 2: 6, 3: 7, 4: 8 }[p];
       room = () => ({ cheese: a, meat: b, bread: a, salad: a, veg: b, pasta: a });
@@ -515,6 +634,8 @@ safe-buffer/index.js:
     };
     if (cfg.spices) spaces.green = [null, null];
     if (cfg.sink) spaces.sink = [null, null];
+    if (cfg.pantry) spaces.storC = [null, null];
+    if (cfg.shop) spaces.van = []; // no limit: any number of timers fit next to the van
 
     const s = {
       v: 2,
@@ -522,15 +643,22 @@ safe-buffer/index.js:
       settings: st,
       goal: goalOf(st.scenario, players.length, st.challenge),
       players: players.map(x => ({ id: x.id, name: x.name, color: x.color })),
-      deck: shuffle(st.scenario === 1 ? FRIENDS.slice() : FRIENDS.concat(REGULARS)),
+      deck: shuffle(st.scenario === 1 ? FRIENDS.slice() : FRIENDS.concat(REGULARS, cfg.challenging ? CHALLENGING : [])),
       seats,
       spaces,
-      storage: { A: room(), B: room() },
+      storage: roomC ? { A: room(), B: room(), C: roomC } : { A: room(), B: room() },
       bag,
       cupboard,
       dirty,
       coins: cfg.money ? 2 : 0,
       drinkCoins: 0,
+      shopCoins: 0,
+      shift: 1,
+      shifts: cfg.shifts,
+      reports: [],
+      shiftCoins0: cfg.money ? 2 : 0,
+      shiftDrinks0: 0,
+      shiftShop0: 0,
       orders: [],
       workers: {},
       open: {},
@@ -567,6 +695,10 @@ safe-buffer/index.js:
     const ws = s.workers[pid] || [];
     if (ws.some(w => timerReady(s, w, now))) return 0;
     return Math.min.apply(null, ws.map(w => w.start + s.settings.workerSec * 1000 - now));
+  }
+  function freeSpace(s, pid, t, w) {
+    if (w.area === 'van') s.spaces.van = s.spaces.van.filter(x => !(x.pid === pid && x.t === t));
+    else s.spaces[w.area][w.idx] = null;
   }
   // Which of the player's timers moves when they tap a space.
   function pickTimer(s, pid, area, idx, now) {
@@ -643,13 +775,13 @@ safe-buffer/index.js:
     return o;
   }
 
-  const HOST_ONLY = ['start', 'endNow'];
+  const HOST_ONLY = ['start', 'endNow', 'nextShift'];
 
   // Returns null on success, or an error message. Mutates s.
   function apply(s, a, now) {
     try {
       doApply(s, a, now);
-      if (s.phase === 'play' && s.goalAt == null && now >= s.shiftStart && tally(s).win) s.goalAt = now - s.shiftStart;
+      if (s.phase === 'play' && s.shifts === 1 && s.goalAt == null && now >= s.shiftStart && tally(s).win) s.goalAt = now - s.shiftStart;
       return null;
     } catch (e) {
       return e.message;
@@ -674,19 +806,22 @@ safe-buffer/index.js:
         if (now < s.shiftStart) throw new Error('Wait for the countdown.');
         if (now >= s.shiftEnd) throw new Error('Time is up — no new actions.');
         const slots = s.spaces[a.area];
-        if (!slots || a.idx < 0 || a.idx >= slots.length) throw new Error('No such space.');
-        const occ = slots[a.idx];
+        const van = a.area === 'van';
+        if (!slots || (!van && (a.idx < 0 || a.idx >= slots.length))) throw new Error('No such space.');
+        if (van && s.coins < 1) throw new Error('The office has no coins left to go shopping.');
+        const occ = van ? null : slots[a.idx];
         if (occ && occ.pid !== pid) throw new Error('Someone else is working there.');
         if (occ && !timerReady(s, s.workers[pid][occ.t], now)) throw new Error('Your timer is still running here.');
         if (!workerReady(s, pid, now)) {
           const n = s.workers[pid].length;
           throw new Error(`${n > 1 ? 'Both your timers are' : 'Your timer is'} still running (${Math.ceil(workerLeft(s, pid, now) / 1000)} s).`);
         }
-        const t = pickTimer(s, pid, a.area, a.idx, now);
+        const t = pickTimer(s, pid, a.area, van ? -1 : a.idx, now);
         const w = s.workers[pid][t];
-        if (w) s.spaces[w.area][w.idx] = null;
-        slots[a.idx] = { pid, t, start: now };
-        s.workers[pid][t] = { area: a.area, idx: a.idx, start: now };
+        if (w) freeSpace(s, pid, t, w);
+        if (van) slots.push({ pid, t, start: now });
+        else slots[a.idx] = { pid, t, start: now };
+        s.workers[pid][t] = { area: a.area, idx: van ? -1 : a.idx, start: now };
         stat(s, pid, a.area);
         // Starting a new action ends the one before it.
         if (a.area === 'reception') {
@@ -698,6 +833,7 @@ safe-buffer/index.js:
         else if (a.area === 'stove') s.open[pid] = { type: 'cook' };
         else if (a.area === 'green') s.open[pid] = { type: 'spice' };
         else if (a.area === 'sink') s.open[pid] = { type: 'wash', left: 3 };
+        else if (van) s.open[pid] = { type: 'shop' };
         else s.open[pid] = { type: 'storage', room: ROOM_OF[a.area] };
         return;
       }
@@ -749,6 +885,40 @@ safe-buffer/index.js:
         if (strict && !needsSp(o, a.spice)) throw new Error(`${DISHES[o.dish].name} doesn't need more ${SP_INFO[a.spice].n.toLowerCase()}.`);
         s.bag[a.spice]--;
         o.sp[a.spice] = (o.sp[a.spice] || 0) + 1;
+        return;
+      }
+      case 'buy': {
+        if (!inPlay(s, now)) throw new Error('The shift is not running.');
+        const op = s.open[pid];
+        if (!op || op.type !== 'shop') throw new Error('Put a timer at the van first.');
+        if (s.coins < 1) throw new Error('The office has no coins left.');
+        if (a.kind === 'ing') {
+          if (!ING.includes(a.ing)) throw new Error('Pick an ingredient.');
+          let room = a.room;
+          if (cfg.pantry && PANTRY_INGS.includes(a.ing)) room = 'C';
+          if (!s.storage[room] || !roomIngs(s, room).includes(a.ing)) throw new Error(`${ING_INFO[a.ing].n} can't go in that storage room.`);
+          s.storage[room][a.ing] += 5;
+        } else if (a.kind === 'cheap' || a.kind === 'pricey') {
+          const allowed = a.kind === 'cheap' ? CHEAP : PRICEY, n = a.kind === 'cheap' ? 3 : 2;
+          if (!Array.isArray(a.spices) || a.spices.length !== n || !a.spices.every(x => allowed.includes(x))) throw new Error(`Pick ${n} ${a.kind === 'cheap' ? 'cheap' : 'expensive'} spices.`);
+          a.spices.forEach(x => { s.bag[x]++; });
+        } else throw new Error('Pick what to buy.');
+        s.coins--;
+        s.shopCoins++;
+        s.open[pid] = null;
+        return;
+      }
+      case 'nextShift': {
+        if (s.phase !== 'between') throw new Error('Not between shifts.');
+        s.shift++;
+        s.phase = 'play';
+        s.shiftStart = now + 3000;
+        s.shiftEnd = s.shiftStart + s.settings.shiftSec * 1000;
+        s.graceEnd = null;
+        s.open = {};
+        Object.keys(s.workers).forEach(k => { s.workers[k] = s.workers[k].map(() => null); });
+        Object.keys(s.spaces).forEach(k => { s.spaces[k] = k === 'van' ? [] : s.spaces[k].map(() => null); });
+        s.shiftCoins0 = s.coins; s.shiftDrinks0 = s.drinkCoins; s.shiftShop0 = s.shopCoins;
         return;
       }
       case 'returnIng': {
@@ -821,32 +991,91 @@ safe-buffer/index.js:
     }
     if (s.phase === 'grace') {
       const anyOpen = s.players.some(p => s.open[p.id]);
-      if (!anyOpen || now >= s.graceEnd) { finish(s, now); changed = true; }
+      if (!anyOpen || now >= s.graceEnd) { endShift(s, now); changed = true; }
     }
     return changed;
   }
 
+  // A meal that can never be served as it is: wrong plate, too much of something, overcooked,
+  // or cooking started with ingredients missing. Between shifts these are thrown away.
+  function isMistake(s, o) {
+    const d = DISHES[o.dish];
+    if (o.plate && !plateOk(s, o)) return true;
+    if (ING.some(i => (o.ing[i] || 0) > (d.ing[i] || 0))) return true;
+    if (SPICES.some(i => ((o.sp || {})[i] || 0) > (d.sp[i] || 0))) return true;
+    if (o.row > d.cook) return true;
+    return o.row > 0 && !ingComplete(o);
+  }
+
+  function endShift(s, now) {
+    const cfg = cfgOf(s);
+    const last = s.shift >= s.shifts;
+    const rep = {
+      shift: s.shift, start: s.shiftCoins0, drinks: s.drinkCoins - s.shiftDrinks0, shopping: s.shopCoins - s.shiftShop0,
+      meals: 0, freeDrinks: 0, salary: 0, orders: [], bankrupt: false,
+    };
+    const checked = s.orders.map(o => ({ o, reasons: checkOrder(s, o) }));
+    // Served meals pay first, then free drinks for everyone still waiting.
+    checked.forEach(({ o, reasons }) => {
+      if (reasons.length) return;
+      if (cfg.money) { s.coins += DISHES[o.dish].c; rep.meals += DISHES[o.dish].c; }
+      rep.orders.push({ pid: o.pid, dish: o.dish, ok: true, reasons: [], fate: 'served' });
+    });
+    const keep = [];
+    checked.forEach(({ o, reasons }) => {
+      if (!reasons.length) { if (!last && o.plate) s.dirty[o.plate]++; return; }
+      if (cfg.money && s.coins > 0) { s.coins--; rep.freeDrinks++; }
+      const mistake = !last && isMistake(s, o);
+      rep.orders.push({ pid: o.pid, dish: o.dish, ok: false, reasons, fate: last ? 'unserved' : mistake ? 'binned' : 'waiting' });
+      if (mistake) { if (o.plate) s.dirty[o.plate]++; o.plate = null; o.ing = {}; o.sp = {}; o.src = []; o.row = 0; }
+      keep.push(o);
+    });
+    if (!last) s.orders = keep;
+    if (cfg.salary) {
+      rep.salary = s.players.length * cfg.timers * SALARY_PER_TIMER;
+      if (s.coins >= rep.salary) s.coins -= rep.salary;
+      else { rep.bankrupt = true; rep.short = rep.salary - s.coins; rep.salary = s.coins; s.coins = 0; }
+    }
+    rep.end = s.coins;
+    s.reports.push(rep);
+    s.open = {};
+    if (last || rep.bankrupt) finish(s, now);
+    else s.phase = 'between';
+  }
+
   function finish(s, now) {
-    const T = tally(s);
+    const cfg = cfgOf(s);
+    const all = s.reports.flatMap(r => r.orders.map(o => Object.assign({ shift: r.shift }, o)));
+    const per = s.players.map(p => {
+      // every served meal, plus whatever was still open in the final report
+      const lastShift = s.reports.length ? s.reports[s.reports.length - 1].shift : s.shift;
+      const orders = all.filter(o => o.pid === p.id && (o.ok || o.shift === lastShift));
+      return { id: p.id, name: p.name, color: p.color, served: orders.filter(o => o.ok).length, orders, stats: s.stats[p.id] };
+    });
+    const served = per.reduce((a, x) => a + x.served, 0);
+    const bankrupt = s.reports.some(r => r.bankrupt);
+    const g = s.goal;
+    const win = g.kind === 'each' ? per.every(x => x.served >= g.n) : g.kind === 'meals' ? served >= g.n : !bankrupt && s.coins >= g.n;
     s.open = {};
     s.phase = 'results';
     s.results = {
       at: now,
       scenario: s.settings.scenario,
-      goal: s.goal,
-      win: T.win,
-      served: T.served,
-      coins: T.coins,
-      money: cfgOf(s).money ? { start: 2, drinks: s.drinkCoins, meals: T.mealCoins, freeDrinks: T.freeDrinks } : null,
+      goal: g,
+      win,
+      bankrupt,
+      served,
+      coins: s.coins,
+      money: cfg.money ? s.reports : null,
       goalAt: s.goalAt,
       usedMs: Math.min(now, s.shiftEnd) - s.shiftStart,
-      per: T.per,
+      per,
     };
   }
 
   root.Engine = {
-    ING, ING_INFO, SPICES, SP_INFO, PLATES, PLATE_NAME, DISHES, FRIENDS, REGULARS, MAX_ROW, SCEN, AREA_NAME, ROOM_OF, HOST_ONLY,
-    layout, goalOf, newGame, apply, tick, finish, checkOrder, plateOk, needsIng, needsSp, ingComplete, tally,
+    ING, ING_INFO, SPICES, SP_INFO, PLATES, PLATE_NAME, DISHES, FRIENDS, REGULARS, CHALLENGING, CHEAP, PRICEY, PANTRY_INGS, MAX_ROW, SCEN, AREA_NAME, ROOM_OF, HOST_ONLY, SALARY_PER_TIMER,
+    layout, goalOf, newGame, apply, tick, endShift, finish, checkOrder, plateOk, needsIng, needsSp, ingComplete, isMistake, tally, roomIngs,
     workerReady, workerLeft, timerReady, cfgOf,
   };
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -979,7 +1208,7 @@ safe-buffer/index.js:
   let netStatus = '';
   let seenErr = 0;
   let sound = LS.get('kc-sound', true);
-  const ui = { screen: 'home', sel: null, armed: null, menu: false, help: false, joining: false, results: true };
+  const ui = { screen: 'home', sel: null, armed: null, menu: false, help: false, joining: false, results: true, shop: { ing: null, cheap: [], pricey: [] } };
 
   const app = document.getElementById('app');
   const hostNow = () => (role === 'host' ? Date.now() : Date.now() + offset);
@@ -1107,6 +1336,7 @@ safe-buffer/index.js:
       const before = g.phase;
       if (E.tick(g, Date.now())) {
         if (g.phase === 'results' && before !== 'results') saveLog(g);
+        if (g.phase !== before) onPhaseChange(before, g.phase);
         changed();
       }
     }
@@ -1193,6 +1423,7 @@ safe-buffer/index.js:
   function onPhaseChange(from, to) {
     if (to === 'play') { unlockAudio(); }
     if (to === 'grace') { SFX.end(); }
+    if (to === 'play' && from === 'between') { lastCount = null; }
     if (to === 'results') { ui.results = true; }
   }
 
@@ -1239,7 +1470,7 @@ safe-buffer/index.js:
 
   function spot(g, area, idx) {
     const occ = g.spaces[area][idx];
-    const icons = { reception: '🚪', dining: '📝', storA: '📦', storB: '📦', stove: '🔥', green: '🌿', sink: '🧽' };
+    const icons = { reception: '🚪', dining: '📝', storA: '📦', storB: '📦', storC: '📦', stove: '🔥', green: '🌿', sink: '🧽' };
     const label = `${E.AREA_NAME[area]}`;
     if (!occ) return `<button class="spot" data-a="place" data-area="${area}" data-idx="${idx}" aria-label="${label}: free"><span>${icons[area]}</span></button>`;
     const p = playerOf(g, occ.pid) || { name: '?', color: 'red' };
@@ -1250,7 +1481,7 @@ safe-buffer/index.js:
   function miniTicket(g, dishId) {
     const d = E.DISHES[dishId];
     const money = E.cfgOf(g).money;
-    return `<span class="mt-top"><span class="mt-e">${d.e}</span><span class="mt-n">${d.name}</span>${money ? coin(d.c) : ''}</span><span class="mt-r">${plateBadge(d.plate)}<span class="mt-i">${ingRow(d.ing)}${spIcons(d)}</span>${pot(d.cook)}</span>`;
+    return `<span class="mt-top"><span class="mt-e">${d.e}</span><span class="mt-n">${d.ch ? '⭐ ' : ''}${d.name}</span>${money ? coin(d.c) : ''}</span><span class="mt-r">${plateBadge(d.plate)}<span class="mt-i">${ingRow(d.ing)}${spIcons(d)}</span>${pot(d.cook)}</span>`;
   }
 
   function myOpen(g) { return g.open[me.pid] || null; }
@@ -1324,6 +1555,8 @@ safe-buffer/index.js:
     1: 'Seat friends, take orders, fetch ingredients, cook. One sand timer each.',
     2: 'New: spices from the greenhouse, two sand timers each, and plates one size bigger are fine. Mistakes can no longer be put back.',
     3: 'New: wash dirty plates at the sink and earn coins. Botched meals go in the bin.',
+    4: 'New: two shifts, shopping at the van, and 18 demanding guests who pay more.',
+    5: 'New: bread and pasta get their own storage room, and the chefs want a salary after every shift.',
   };
 
   function renderLobby() {
@@ -1336,7 +1569,10 @@ safe-buffer/index.js:
     const shiftVals = (DEV ? [40] : []).concat([240, 270, 300, 360]);
     const shiftLbl = v => fmt(v * 1000) + (v === normal ? ' normal' : v === 300 ? ' family' : '');
     const goal = E.goalOf(scen, L.players.length, S.challenge);
-    const goalTxt = goal.kind === 'each' ? `every chef serves ${goal.n} meals` : goal.kind === 'meals' ? `serve ${goal.n} meals together` : `earn ${goal.n} coins together`;
+    const salary = L.players.length * 2 * E.SALARY_PER_TIMER;
+    const goalTxt = goal.kind === 'each' ? `every chef serves ${goal.n} meals` : goal.kind === 'meals' ? `serve ${goal.n} meals together`
+      : goal.salary ? `pay ${salary} coins of salaries after each shift and ${goal.n > 1 ? `end with ${goal.n} coins` : 'never go broke'}`
+      : `earn ${goal.n} coins together${E.SCEN[scen].shifts > 1 ? ' over two shifts' : ''}`;
     return `<main class="lobby">
       <h1 class="logo small">Küchen<span>-</span>Chaos</h1>
       <section class="card">
@@ -1346,13 +1582,13 @@ safe-buffer/index.js:
         <ul class="plist">${L.players.map(p => `<li>${dot(p.color)}<span>${esc(p.name || 'Chef')}</span>${p.id === me.pid ? '<em>you</em>' : ''}${host && p.id !== me.pid ? `<button class="x" data-a="kick" data-id="${p.id}" aria-label="Remove ${esc(p.name)}">✕</button>` : ''}</li>`).join('')}</ul>
         ${!L.players.some(p => p.id === me.pid) && !host ? '<p class="note">Joining…</p>' : ''}
         <h2>Restaurant</h2>
-        <div class="scens">${[1, 2, 3].map(n => `<button class="scen ${scen === n ? 'on' : ''}" ${host ? `data-a="set" data-k="scenario" data-v="${n}"` : 'disabled'}><b>${n}. ${E.SCEN[n].name}${won(n) ? ' <span class="won">✓</span>' : ''}</b><small>${SCEN_BLURB[n]}</small></button>`).join('')}</div>
+        <div class="scens">${[1, 2, 3, 4, 5].map(n => `<button class="scen ${scen === n ? 'on' : ''}" ${host ? `data-a="set" data-k="scenario" data-v="${n}"` : 'disabled'}><b>${n}. ${E.SCEN[n].name}${won(n) ? ' <span class="won">✓</span>' : ''}</b><small>${SCEN_BLURB[n]}</small></button>`).join('')}</div>
         <p class="note">Goal: ${goalTxt}.</p>
         <h2>Settings</h2>
         <div class="setrow"><span>Sand timer</span>${DEV ? seg('workerSec', [3, 20, 25, 30, 35], ['3 s', '20 s', '25 s', '30 s', '35 s']) : seg('workerSec', [20, 25, 30, 35], ['20 s', '25 s', '30 s', '35 s'])}</div>
         <div class="setrow"><span>Shift length</span>${seg('shiftSec', shiftVals, shiftVals.map(shiftLbl))}</div>
         <div class="setrow"><span>Wrong moves</span>${seg('strict', [false, true], ['Allowed, checked at the end', 'Blocked'])}</div>
-        ${scen === 3 ? `<div class="setrow"><span>Coin goal</span>${seg('challenge', [false, true], [`Normal (${E.goalOf(3, L.players.length, false).n})`, `Challenge (${E.goalOf(3, L.players.length, true).n})`])}</div>` : ''}
+        ${scen >= 3 ? `<div class="setrow"><span>Coin goal</span>${seg('challenge', [false, true], [scen === 5 ? 'Normal (don\'t go broke)' : `Normal (${E.goalOf(scen, L.players.length, false).n})`, `Challenge (${E.goalOf(scen, L.players.length, true).n})`])}</div>` : ''}
         ${host ? `<button class="btn big" data-a="newgame" ${L.players.length ? '' : 'disabled'}>Set the tables</button>` : '<p class="note">The host starts the game.</p>'}
       </section>
       <div class="lobbylinks"><button class="link" data-a="help">How to play</button><button class="link" data-a="leave">Leave</button></div>
@@ -1361,9 +1597,13 @@ safe-buffer/index.js:
 
   function goalChip(g) {
     const G = g.goal;
-    if (G.kind === 'coins') return `<div class="goalchip" title="Coins in the office">🪙 <b>${g.coins}</b><small>goal ${G.n}</small></div>`;
-    if (G.kind === 'meals') return `<div class="goalchip">🍽️ <small>goal ${G.n} meals</small></div>`;
-    return `<div class="goalchip">🍽️ <small>${G.n} meals each</small></div>`;
+    const shift = g.shifts > 1 ? `<div class="goalchip shiftchip">Shift <b>${g.shift}</b><small>of ${g.shifts}</small></div>` : '';
+    if (G.kind === 'coins') {
+      const sal = G.salary ? `pay ${g.players.length * 2 * E.SALARY_PER_TIMER} per shift` : '';
+      return shift + `<div class="goalchip" title="Coins in the office">🪙 <b>${g.coins}</b><small>${G.salary && G.n === 1 ? sal : `goal ${G.n}${sal ? ' · ' + sal : ''}`}</small></div>`;
+    }
+    if (G.kind === 'meals') return shift + `<div class="goalchip">🍽️ <small>goal ${G.n} meals</small></div>`;
+    return shift + `<div class="goalchip">🍽️ <small>${G.n} meals each</small></div>`;
   }
 
   function renderGame(g) {
@@ -1387,7 +1627,7 @@ safe-buffer/index.js:
       const active = op && op.type === 'storage' && op.room === key;
       return `<section class="area store st${num} ${active ? 'active' : ''}">
         <div class="ahead"><h3>Storage ${num}</h3><div class="spots">${g.spaces[area].map((_, i) => spot(g, area, i)).join('')}</div></div>
-        <div class="ings">${E.ING.map(i => `<button class="ing ${active && g.storage[key][i] ? 'glow' : ''}" data-a="takeIng" data-room="${key}" data-ing="${i}" ${g.storage[key][i] ? '' : 'disabled'} aria-label="${E.ING_INFO[i].n}"><span>${E.ING_INFO[i].e}</span><b>${g.storage[key][i]}</b></button>`).join('')}</div>
+        <div class="ings">${E.roomIngs(g, key).map(i => `<button class="ing ${active && g.storage[key][i] ? 'glow' : ''}" data-a="takeIng" data-room="${key}" data-ing="${i}" ${g.storage[key][i] ? '' : 'disabled'} aria-label="${E.ING_INFO[i].n}"><span>${E.ING_INFO[i].e}</span><b>${g.storage[key][i]}</b></button>`).join('')}</div>
       </section>`;
     };
 
@@ -1400,6 +1640,13 @@ safe-buffer/index.js:
     const sink = cfg.sink ? `<section class="area sink ${washActive ? 'active' : ''}">
         <div class="gh"><div class="ahead"><h3>Sink${washActive ? ` <small>wash ${op.left}</small>` : ' <small>dirty</small>'}</h3><div class="spots">${g.spaces.sink.map((_, i) => spot(g, 'sink', i)).join('')}</div></div>
         <div class="plates">${E.PLATES.map(sz => `<button class="pbtn dirty ${washActive && g.dirty[sz] ? 'glow' : ''}" data-a="wash" data-size="${sz}" ${g.dirty[sz] ? '' : 'disabled'}>${plateBadge(sz, 'dirtyp')}<b>×${g.dirty[sz]}</b></button>`).join('')}</div></div></section>` : '';
+
+    const vanTimers = cfg.shop ? g.spaces.van.map(x => {
+      const p = playerOf(g, x.pid) || { name: '?', color: 'red' };
+      return `<span class="vt" style="--c:${COLORS[p.color]}" data-wstart="${x.start}"><span class="ini">${esc(p.name.slice(0, 1).toUpperCase())}</span><em class="sec"></em></span>`;
+    }).join('') : '';
+    // The van has no action spaces, so it lives in the top bar where every chef can reach it.
+    const van = cfg.shop ? `<div class="vanbar ${op && op.type === 'shop' ? 'active' : ''}"><button class="vanbtn" data-a="place" data-area="van" data-idx="0" ${g.coins < 1 ? 'disabled' : ''} aria-label="Van: go shopping for 1 coin">🚐 <span>Shop<small>1 🪙</small></span></button><div class="vts">${vanTimers}</div></div>` : '';
 
     const others = g.players.filter(p => p.id !== me.pid).map(p => {
       const os = g.orders.filter(o => o.pid === p.id);
@@ -1419,6 +1666,8 @@ safe-buffer/index.js:
     else if (op && op.type === 'order') { prompt = g.seats.some(s => s.dish) ? '📝 Tap a guest to take their order.' : '📝 Nobody is waiting for you to take their order.'; promptBtn = '<button class="btn ghost" data-a="done">Skip</button>'; }
     else if (op && op.type === 'storage') { prompt = selO ? `📦 Tap ingredients for your ${E.DISHES[selO.dish].name}.${myOrders.length > 1 ? ' Tap another ticket to fill that one.' : ''}` : '📦 Take an order first. Ingredients only go on your own plates.'; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
     else if (op && op.type === 'spice') { prompt = selO ? `🌿 Tap spices for your ${E.DISHES[selO.dish].name}.${myOrders.length > 1 ? ' Tap another ticket to season that one.' : ''}` : '🌿 Take an order first. Spices only go on your own plates.'; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
+    else if (op && op.type === 'shop') { prompt = '🚐 Choose what to buy for 1 coin.'; promptBtn = '<button class="btn ghost" data-a="done">Buy nothing</button>'; }
+    else if (g.phase === 'between') prompt = 'Shift break. Plan the next shift together.';
     else if (op && op.type === 'wash') { prompt = `🧽 Tap dirty plates in the sink to wash them (${op.left} more).`; promptBtn = '<button class="btn" data-a="done">Done</button>'; }
     else if (op && op.type === 'cook') { prompt = myOrders.length ? '🔥 Tap “Cook one step” on a meal.' : '🔥 You have nothing to cook yet.'; promptBtn = '<button class="btn ghost" data-a="done">Skip</button>'; }
     else if (g.phase === 'grace') prompt = 'Time is up! Waiting for the others to finish.';
@@ -1444,6 +1693,7 @@ safe-buffer/index.js:
         <div class="brand">Küchen<span>-</span>Chaos <small>${esc(wrap.room)}</small></div>
         <div class="clock" id="clock">${clock}</div>
         ${goalChip(g)}
+        ${van}
         <div class="who">${g.players.map(p => `<span class="pchip" style="--c:${COLORS[p.color]}" data-wpid="${p.id}">${esc(p.name)}</span>`).join('')}</div>
         <div class="net" id="net"></div>
         <button class="menu-b" data-a="menu" aria-label="Menu">☰</button>
@@ -1456,6 +1706,7 @@ safe-buffer/index.js:
           ${green}
           ${room('storA', 'A', 1)}
           ${room('storB', 'B', 2)}
+          ${g.storage.C ? room('storC', 'C', 3) : ''}
           <section class="area stove ${op && op.type === 'cook' ? 'active' : ''}"><h3>Stove</h3><div class="spots">${g.spaces.stove.map((_, i) => spot(g, 'stove', i)).join('')}</div></section>
           <section class="area cupboard ${plateGlow ? 'active' : ''}"><h3>Cupboard <small>free, any time</small></h3><div class="plates">${E.PLATES.map(sz => `<button class="pbtn ${plateGlow && g.cupboard[sz] ? 'glow' : ''}" data-a="plate" data-size="${sz}" ${g.cupboard[sz] ? '' : 'disabled'}>${plateBadge(sz, 'big')}<b>×${g.cupboard[sz]}</b></button>`).join('')}</div></section>
           ${sink}
@@ -1467,9 +1718,63 @@ safe-buffer/index.js:
         </aside>
       </div>
       ${g.phase === 'ready' ? renderReady(g) : ''}
+      ${g.phase === 'between' ? renderBetween(g) : ''}
+      ${op && op.type === 'shop' && (g.phase === 'play' || g.phase === 'grace') ? renderShop(g) : ''}
       ${g.phase === 'results' && ui.results ? renderResults(g) : ''}
       <div class="countdown" id="countdown"></div>
     </div>`;
+  }
+
+  function renderShop(g) {
+    const pantry = E.cfgOf(g).pantry;
+    const sh = ui.shop;
+    const ingBtn = i => `<button class="sbtn ${sh.ing === i ? 'on' : ''}" data-a="shopIng" data-ing="${i}">${E.ING_INFO[i].e}<small>×5</small></button>`;
+    let rooms = '';
+    if (sh.ing) {
+      const opts = pantry && E.PANTRY_INGS.includes(sh.ing) ? [['C', 3]] : [['A', 1], ['B', 2]];
+      rooms = `<div class="shoprooms">Put 5 ${E.ING_INFO[sh.ing].n.toLowerCase()} in ${opts.map(([r, n]) => `<button class="btn" data-a="buyIng" data-room="${r}">storage ${n}</button>`).join(' or ')}</div>`;
+    }
+    const tray = (kind, n) => {
+      const picks = sh[kind];
+      return `<div class="tray">${Array.from({ length: n }, (_, i) => `<span class="slot">${picks[i] ? E.SP_INFO[picks[i]].e : ''}</span>`).join('')}
+        ${picks.length ? `<button class="link" data-a="shopClear" data-kind="${kind}">clear</button>` : ''}
+        ${picks.length === n ? `<button class="btn" data-a="buySp" data-kind="${kind}">Buy these</button>` : ''}</div>`;
+    };
+    const spBtn = (kind, i) => `<button class="sbtn" data-a="shopSp" data-kind="${kind}" data-spice="${i}">${E.SP_INFO[i].e}<small>${E.SP_INFO[i].n}</small></button>`;
+    return `<div class="sheet shopsheet"><div class="card shop">
+      <h2>🚐 Shopping</h2>
+      <p class="note">Each trip costs 1 coin from the office (now ${g.coins}). Pick one of the three.</p>
+      <h3>5 of one ingredient</h3>
+      <div class="shoprow">${E.ING.map(ingBtn).join('')}</div>${rooms}
+      <h3>3 cheap spices, any mix</h3>
+      <div class="shoprow">${E.CHEAP.map(i => spBtn('cheap', i)).join('')}</div>${tray('cheap', 3)}
+      <h3>2 expensive spices, any mix</h3>
+      <div class="shoprow">${E.PRICEY.map(i => spBtn('pricey', i)).join('')}</div>${tray('pricey', 2)}
+      <button class="btn ghost" data-a="done">Buy nothing</button>
+    </div></div>`;
+  }
+
+  function moneyLine(r) {
+    const parts = [`start ${r.start}`, `+ drinks ${r.drinks}`];
+    if (r.shopping) parts.push(`− shopping ${r.shopping}`);
+    parts.push(`+ meals ${r.meals}`, `− free drinks ${r.freeDrinks}`);
+    if (r.salary || r.bankrupt) parts.push(`− salaries ${r.salary}`);
+    return `${parts.join(' ')} = <b>${r.end} coins</b>`;
+  }
+
+  function renderBetween(g) {
+    const host = role === 'host';
+    const r = g.reports[g.reports.length - 1];
+    const list = fate => r.orders.filter(o => o.fate === fate).map(o => `${E.DISHES[o.dish].e} ${E.DISHES[o.dish].name} (${esc((playerOf(g, o.pid) || {}).name || '')})`).join(', ');
+    const served = list('served'), waiting = list('waiting'), binned = list('binned');
+    const hostP = wrap.lobby.players[0];
+    return `<div class="sheet readysheet"><div class="card">
+      <h2>End of shift ${r.shift}</h2>
+      <p class="money">${moneyLine(r)}</p>
+      <p>${served ? `Served: ${served}.` : 'No meals were served.'}${waiting ? ` Still waiting: ${waiting} — keep cooking these.` : ''}${binned ? ` Thrown away because of a mistake: ${binned} — these guests still want a fresh meal.` : ''}</p>
+      <p class="note">Plates of served meals went to the sink. Guests at the tables stay for the next shift.</p>
+      ${host ? `<button class="btn big" data-a="nextShift">Start shift ${r.shift + 1}</button>` : `<p class="note">Waiting for ${esc(hostP ? hostP.name : 'the host')} to start the next shift.</p>`}
+    </div></div>`;
   }
 
   function renderReady(g) {
@@ -1479,11 +1784,14 @@ safe-buffer/index.js:
     const timers = E.SCEN[n].timers;
     const goal = G.kind === 'each' ? `In ${t} every chef must serve ${G.n} meals correctly.`
       : G.kind === 'meals' ? `In ${t} you must serve ${G.n} meals correctly together — it doesn't matter who cooks how many.`
-      : `In ${t} the team must earn ${G.n} coins. You start with 2. Every new guest buys a drink (+1). Served meals pay what their ticket shows. Every guest you took an order from but didn't serve gets a free drink (−1).`;
+      : G.salary ? `Two shifts of ${t}. Pay the salaries after both shifts${G.n > 1 ? ` and end with at least ${G.n} coins` : ' and never run out of money'}. Every new guest buys a drink (+1), served meals pay their price, unserved orders get a free drink (−1).`
+      : `${g.shifts > 1 ? `Two shifts of ${t}.` : `In ${t}`} the team must earn ${G.n} coins. You start with 2. Every new guest buys a drink (+1). Served meals pay what their ticket shows. Every guest you took an order from but didn't serve gets a free drink (−1).`;
     const extra = {
       1: 'Seat friends, take their orders, grab the right plate, fetch ingredients and cook.',
       2: 'New: spices come from the greenhouse 🌿 and can be added even while a meal cooks. A plate one size bigger is fine. Each chef now has two sand timers. Wrong ingredients can no longer be put back.',
       3: 'New: most plates start dirty — wash up to 3 per visit at the sink 🧽. A botched meal can go in the bin 🗑️: its plate goes to the sink and the guest waits for a fresh one.',
+      4: 'New: two shifts with a break in between. Storage rooms and the spice bag start nearly empty — send a timer to the van 🚐 to buy 5 of one ingredient, 3 cheap spices or 2 expensive spices for 1 coin. Guests with ⭐ are demanding: more to prepare, better pay. After shift 1, served meals pay, unfinished ones keep cooking in shift 2, and mistakes are thrown away.',
+      5: `New: bread and pasta live only in storage room 3. After every shift each chef takes a salary of ${E.SALARY_PER_TIMER} coins per sand timer — ${g.players.length * 2 * E.SALARY_PER_TIMER} coins for the team. If the office can't pay, the restaurant closes.`,
     }[n];
     return `<div class="sheet readysheet"><div class="card">
       <h2>${n}. ${E.SCEN[n].name}</h2>
@@ -1498,11 +1806,12 @@ safe-buffer/index.js:
     const log = host ? LS.get('kc-log', []) : [];
     const wins = log.filter(x => (x.scenario || 1) === (R.scenario || 1) && x.win && x.goalAt != null);
     const best = wins.length ? Math.min.apply(null, wins.map(x => x.goalAt)) : null;
-    const head = R.win
-      ? (G.kind === 'coins' ? `${R.coins} coins — you made it!` : 'Every guest went home happy!')
+    const head = R.bankrupt ? 'The office couldn\'t pay the salaries — the restaurant had to close.'
+      : R.win
+      ? (G.kind === 'coins' ? (G.salary ? `Salaries paid, ${R.coins} coins left — you made it!` : `${R.coins} coins — you made it!`) : 'Every guest went home happy!')
       : (G.kind === 'each' ? 'Not every chef served two meals.' : G.kind === 'meals' ? `${R.served} of ${G.n} meals served — not enough this time.` : `${R.coins} of ${G.n} coins — not enough this time.`);
     const M = R.money;
-    const money = M ? `<p class="money">Start ${M.start} + drinks ${M.drinks} + meals ${M.meals} − free drinks ${M.freeDrinks} = <b>${R.coins} coins</b> (goal ${G.n})</p>` : '';
+    const money = M ? M.map(r => `<p class="money">${M.length > 1 ? `Shift ${r.shift}: ` : ''}${moneyLine(r)}${r.bankrupt ? ` — ${r.short} coins short for the salaries` : ''}</p>`).join('') + `<p class="note">Goal: ${G.salary && G.n === 1 ? 'pay all salaries' : `${G.n} coins${G.salary ? ' after salaries' : ''}`}</p>` : '';
     const per = p => G.kind === 'each' ? `${p.served} of ${G.n}` : `${p.served} served`;
     return `<div class="sheet"><div class="card results ${R.win ? 'won' : 'lost'}">
       <h2>${head}</h2>
@@ -1510,7 +1819,7 @@ safe-buffer/index.js:
       ${money}
       <div class="rgrid">${R.per.map(p => `<div class="rcol" style="--c:${COLORS[p.color]}">
         <h3>${dot(p.color)}${esc(p.name)} <span>${per(p)}</span></h3>
-        ${p.orders.length ? p.orders.map(o => `<div class="rrow ${o.ok ? 'ok' : 'bad'}"><span class="re">${E.DISHES[o.dish].e}</span><div><b>${E.DISHES[o.dish].name}</b>${o.ok ? `<small>served${M ? ` · +${E.DISHES[o.dish].c} coins` : ''}</small>` : `<small>${o.reasons.map(esc).join(' · ')}</small>`}</div><span class="mark">${o.ok ? '✓' : '✗'}</span></div>`).join('') : '<p class="none">No orders taken</p>'}
+        ${p.orders.length ? p.orders.map(o => `<div class="rrow ${o.ok ? 'ok' : 'bad'}"><span class="re">${E.DISHES[o.dish].e}</span><div><b>${E.DISHES[o.dish].name}</b>${o.ok ? `<small>served${M ? ` · +${E.DISHES[o.dish].c} coins` : ''}${M && M.length > 1 ? ` · shift ${o.shift}` : ''}</small>` : `<small>${o.reasons.map(esc).join(' · ')}</small>`}</div><span class="mark">${o.ok ? '✓' : '✗'}</span></div>`).join('') : '<p class="none">No orders taken</p>'}
         <p class="acts">${p.stats ? p.stats.actions : 0} actions${p.stats && p.stats.thrown ? ` · ${p.stats.thrown} binned` : ''}</p>
       </div>`).join('')}</div>
       <div class="rbtns">
@@ -1531,9 +1840,10 @@ safe-buffer/index.js:
         <li><b>🔥 Stove</b> cooks one meal one step. 🍳2 means two stove visits. Too many visits overcook it.</li>
         <li><b>🌿 Greenhouse</b> (from restaurant 2) puts spices on your plates — even on a meal that is already cooking.</li>
         <li><b>🧽 Sink</b> (from restaurant 3) washes up to 3 dirty plates.</li>
+        <li><b>🚐 Van</b> (from restaurant 4) buys 5 of one ingredient, 3 cheap spices or 2 expensive spices for 1 coin. Any number of timers fit at the van.</li>
       </ul>
       <p>Meals are checked when the time is up: right plate (from restaurant 2, one size bigger is fine), exactly the right ingredients and spices, and the right cooking. When time is up you may finish the action you already started.</p>
-      <p>Restaurant 1 forgives mistakes: tap a wrong ingredient twice to put it back. From restaurant 2 on, two sand timers each, and no putting back. From restaurant 3 on, you can bin a botched meal 🗑️ and start it again.</p>
+      <p>Restaurant 1 forgives mistakes: tap a wrong ingredient twice to put it back. From restaurant 2 on, two sand timers each, and no putting back. From restaurant 3 on, you can bin a botched meal 🗑️ and start it again. Restaurants 4 and 5 have two shifts: between them served meals pay, unfinished meals carry over and mistakes are thrown away. In restaurant 5 the chefs take a salary after every shift.</p>
       <button class="btn" data-a="closeHelp">Got it</button>
     </div></div>`;
   }
@@ -1618,7 +1928,7 @@ safe-buffer/index.js:
         if (clock) { clock.textContent = fmt(left); clock.classList.toggle('hurry', left < 30000); }
         const sec = Math.ceil(left / 1000);
         if (sec !== lastSec) { if ([60, 30, 10, 5, 4, 3, 2, 1].includes(sec) && pre <= 0) SFX.warn(); lastSec = sec; }
-      } else if (clock && g.phase !== 'ready') clock.textContent = g.phase === 'grace' ? 'Time!' : 'Done';
+      } else if (clock && g.phase !== 'ready') clock.textContent = g.phase === 'grace' ? 'Time!' : g.phase === 'between' ? 'Break' : 'Done';
       const meP = g.players.some(p => p.id === me.pid);
       if (!once && meP && g.phase === 'play') {
         const nReady = (g.workers[me.pid] || []).filter(w => w && E.timerReady(g, w, now)).length;
@@ -1699,6 +2009,20 @@ safe-buffer/index.js:
         if (g && (g.phase === 'play' || g.phase === 'grace') && !confirm('Stop this shift and go back to the lobby?')) return;
         wrap.game = null; ui.menu = false; changed(); break;
       case 'startShift': if (role === 'host' && g) { E.apply(g, { type: 'start' }, Date.now()); changed(); keepAwake(); } break;
+      case 'nextShift': if (role === 'host' && g) { const err = E.apply(g, { type: 'nextShift' }, Date.now()); if (err) toast(err, 'err'); changed(); keepAwake(); } break;
+      case 'shopIng': ui.shop.ing = t.dataset.ing; render(); break;
+      case 'buyIng': if (g && ui.shop.ing && act({ type: 'buy', kind: 'ing', ing: ui.shop.ing, room: t.dataset.room })) toast(`🚐 Bought 5 ${E.ING_INFO[ui.shop.ing].e}`); break;
+      case 'shopSp': {
+        const k = t.dataset.kind, n = k === 'cheap' ? 3 : 2;
+        if (ui.shop[k].length < n) ui.shop[k].push(t.dataset.spice);
+        render(); break;
+      }
+      case 'shopClear': ui.shop[t.dataset.kind] = []; render(); break;
+      case 'buySp': {
+        const k = t.dataset.kind, picks = ui.shop[k].slice();
+        if (g && act({ type: 'buy', kind: k, spices: picks })) toast(`🚐 Bought ${picks.map(x => E.SP_INFO[x].e).join('')}`);
+        break;
+      }
       case 'endNow': if (role === 'host' && g && confirm('End the shift now and check the meals?')) { E.apply(g, { type: 'endNow' }, Date.now()); ui.menu = false; changed(); } break;
       case 'log': downloadLog(); break;
       case 'hideResults': ui.results = false; render(); break;
@@ -1706,6 +2030,7 @@ safe-buffer/index.js:
       case 'place': {
         if (!g) return;
         const area = t.dataset.area, idx = +t.dataset.idx;
+        if (area === 'van') ui.shop = { ing: null, cheap: [], pricey: [] };
         if (act({ type: 'place', area, idx })) SFX.tap();
         break;
       }
